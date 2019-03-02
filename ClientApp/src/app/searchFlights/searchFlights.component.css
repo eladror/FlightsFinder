@@ -1,0 +1,18 @@
+.search-form{
+    width: 850px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.date-picker-field{
+    margin-left: 20px;
+}
+
+.search-button-div{
+    width: 150px;
+    margin: auto;
+}
+
+.radio-button-field{
+    margin-right: 40px;
+}

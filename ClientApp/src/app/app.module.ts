@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -9,12 +9,21 @@ import { SearchFlightsComponent } from './searchFlights/searchFlights.component'
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatToolbarModule, MatTabsModule, MatIconModule} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  MatToolbarModule, MatTabsModule, MatIconModule, MatInputModule,
+  MatFormFieldModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule, MatDatepickerModule, MatRadioModule,
+} from '@angular/material';
 
 @NgModule({
-  imports: [MatToolbarModule, MatTabsModule, MatIconModule],
-  exports: [MatToolbarModule, MatTabsModule, MatIconModule],
+  imports: [MatToolbarModule, MatTabsModule, MatIconModule,
+    FormsModule, MatInputModule, MatFormFieldModule,
+    ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
+    MatDatepickerModule, MatRadioModule],
+  exports: [MatToolbarModule, MatTabsModule, MatIconModule,
+    FormsModule, MatInputModule, MatFormFieldModule,
+    ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
+    MatDatepickerModule, MatRadioModule],
 })
 export class AngularMaterialModule { }
 @NgModule({
