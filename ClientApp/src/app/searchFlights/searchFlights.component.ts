@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-search-flights',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 
 export class SearchFlightsComponent {
+  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
+  tripType = 'roundTrip';
+
+  isOneWay() {
+    return this.tripType === 'oneWay';
+  }
 }
