@@ -6,9 +6,9 @@
     </mat-radio-group>
   </div>
   <div>
-    <form class="example-form">
+    <form class="example-form" (ngSubmit)="onSearch()">
       <mat-form-field class="example-full-width">
-        <input type="text" placeholder="From..." matInput [formControl]="myControl" [matAutocomplete]="auto">
+        <input type="text" placeholder="From..." matInput [formControl]="whereFrom" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let option of options" [value]="option">
             {{option}}
@@ -19,7 +19,7 @@
         <mat-icon>swap_horiz</mat-icon>
       </button>
       <mat-form-field class="example-full-width">
-        <input type="text" placeholder="To..." matInput [formControl]="myControl" [matAutocomplete]="auto">
+        <input type="text" placeholder="To..." matInput [formControl]="whereTo" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let option of options" [value]="option">
             {{option}}
@@ -27,20 +27,22 @@
         </mat-autocomplete>
       </mat-form-field>
       <mat-form-field class="date-picker-field">
-        <input matInput [matDatepicker]="departurePicker" placeholder="Departure on...">
+        <input matInput [matDatepicker]="departurePicker" placeholder="Departure on..." [formControl]="departureDate" >
         <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
         <mat-datepicker #departurePicker></mat-datepicker>
       </mat-form-field>
       <mat-form-field class="date-picker-field">
-        <input [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker" placeholder="Return on...">
+        <input [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker" placeholder="Return on..." [formControl]="returnDate">
         <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
         <mat-datepicker #returnPicker></mat-datepicker>
       </mat-form-field>
+
+      <div class="search-button-div">
+        <button type="submit" mat-raised-button color="accent">Search
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
     </form>
   </div>
-  <div class="search-button-div">
-    <button mat-raised-button color="accent">Search
-      <mat-icon>search</mat-icon>
-    </button>
-  </div>
+  
 </div>

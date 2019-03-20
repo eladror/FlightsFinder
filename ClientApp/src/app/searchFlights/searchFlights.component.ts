@@ -8,11 +8,18 @@ import { FormControl } from '@angular/forms';
 })
 
 export class SearchFlightsComponent {
-  myControl = new FormControl();
+  whereTo = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
   tripType = 'roundTrip';
+  departureDate = new FormControl(new Date());
+  returnDate = new FormControl(new Date);
+  whereFrom = new FormControl();
 
   isOneWay() {
     return this.tripType === 'oneWay';
+  }
+
+  onSearch() {
+    alert(this.whereFrom.value);
   }
 }
