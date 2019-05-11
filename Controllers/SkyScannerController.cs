@@ -10,7 +10,7 @@ namespace FlightsFinder.Controllers
     public class SkyScannerController : Controller
     {
         private SkyScannerApi api { get; set; }
-        private static readonly string SKY_SCANNER_KEY = "";
+        private static readonly string SKY_SCANNER_KEY = "a782b8720fmsh4ac99c302e7bd93p1396a3jsn094060809649";
         private static readonly string DEFAULT_COUNTRY = "IL";
         public SkyScannerController() : base()
         {
@@ -33,10 +33,7 @@ namespace FlightsFinder.Controllers
         [Route("flights")]
         public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, int people)
         {
-            //return api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
-            List<Trip> test = new List<Trip>();
-            test.Add(new Trip());
-            return test;
+            return api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
         }
     }
 }
