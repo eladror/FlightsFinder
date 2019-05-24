@@ -117,6 +117,19 @@ namespace FlightsFinder.Controllers.SkyScanner
             }
             return countries;
         }
+        private static Dictionary<K, T> toDic<K, T>(IEnumerable<T> l, Func<T, K> key)
+        {
+            Dictionary<K, T> d = new Dictionary<K, T>();
+            foreach (var i in l)
+            {
+                K k = key.Invoke(i);
+                if (!d.ContainsKey(k))
+                {
+                    d.Add(k, i);
+                }
+            }
+            return d;
+        }
         public async Task<List<Trip>> getFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, string flightClass, string country, int adults, int children, int infants, Currencies currencies)
         {
             validateDates(outboundDate, inboundDate);
@@ -147,20 +160,23 @@ namespace FlightsFinder.Controllers.SkyScanner
             validateResponse(response);
             var responseString = await response.Content.ReadAsStringAsync();
             FlightResult res = JsonConvert.DeserializeObject<FlightResult>(responseString);
-            var legs = res.Legs.ToDictionary(leg => leg.Id);
-            var agents = res.Agents.ToDictionary(agent => agent.Id);
-            var places = res.ApiFlightPlaces.ToDictionary(place => place.Id);
-            var segments = res.Segments.ToDictionary(segment => segment.Id);
-            var carriers = res.Carriers.ToDictionary(carrier => carrier.Id);
+            var legs = toDic(res.Legs, leg => leg.Id);
+            var agents = toDic(res.Agents, agent => agent.Id);
+            var places = toDic(res.ApiFlightPlaces, place => place.Id);
+            var segments = toDic(res.Segments, segment => segment.Id);
+            var carriers = toDic(res.Carriers, carrier => carrier.Id);
             return res.Itineraries.Select(itin =>
             {
                 List<Agent> initAgents = itin.PricingOptions.Select(priceOption =>
                 {
                     return new Agent();
                 }).ToList();
-                return new Trip();
+                Trip t = new Trip();
+                t.arrive = legs[itin.InboundLegId].Arrival.DateTime;
+                t.departure = legs[itin.OutboundLegId].Departure.DateTime;
+                t.agents = initAgents;
+                return t;
             }).ToList();
-            return null;
         }
     }
     internal static class CurrenciesExtensions

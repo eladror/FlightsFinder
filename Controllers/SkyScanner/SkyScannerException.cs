@@ -27,5 +27,6 @@ namespace FlightsFinder.Controllers.SkyScanner
     {
         public HttpResponseMessage responseMessage { get; private set; }
         public SkyScannerServerError(HttpResponseMessage responseMessage) => this.responseMessage = responseMessage;
+        public override string Message { get { return responseMessage.Content.ReadAsStringAsync().Result; } }
     }
 }
