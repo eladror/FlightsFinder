@@ -8,10 +8,11 @@
   <div>
     <form (ngSubmit)="onSearch()">
       <mat-form-field>
-        <input type="text" placeholder="From..." matInput [formControl]="whereFrom" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let option of options" [value]="option">
-            {{option}}
+        <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
+        <mat-autocomplete #autoFrom="matAutocomplete">
+          <mat-option *ngFor="let option of fromOptions | async" [value]="option.placeName">
+            <span class="country-name">{{ option.countryName }}</span> -
+            <span class="place-name">{{ option.placeName }}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -19,10 +20,11 @@
         <mat-icon>swap_horiz</mat-icon>
       </button>
       <mat-form-field>
-        <input type="text" placeholder="To..." matInput [formControl]="whereTo" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let option of options" [value]="option">
-            {{option}}
+        <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
+        <mat-autocomplete #autoTo="matAutocomplete">
+          <mat-option *ngFor="let option of toOptions | async" [value]="option.placeName">
+            <span class="country-name">{{ option.countryName }}</span> -
+            <span class="place-name">{{ option.placeName }}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>

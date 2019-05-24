@@ -2,6 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { SafeHtml } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
+import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-flights',
@@ -18,9 +20,44 @@ export class SearchFlightsComponent {
   returnDate = new FormControl(new Date());
   whereFrom = new FormControl();
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+  fromOptions: Observable<any[]>;
+  toOptions: Observable<any[]>;
 
+
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+    this.fromOptions = this.whereFrom.valueChanges
+      .pipe(
+        startWith(null),
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(val => {
+          return this.filter(val || '');
+        })
+      );
+
+      this.toOptions = this.whereTo.valueChanges
+      .pipe(
+        startWith(null),
+        debounceTime(200),
+        distinctUntilChanged(),
+        switchMap(val => {
+          return this.filter(val || '');
+        })
+      );
   }
+
+  filter(val: string): Observable<any[]> {
+    const params = new HttpParams().set('query', val);
+    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params })
+      .pipe(
+        map(response => response.filter(option => {
+          return option.placeName.toLowerCase().indexOf(val.toLowerCase()) === 0;
+        }))
+      );
+  }
+
+
+
 
   isOneWay() {
     return this.tripType === 'oneWay';
