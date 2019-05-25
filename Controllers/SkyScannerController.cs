@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FlightsFinder.Controllers.SkyScanner;
+using Newtonsoft.Json;
+
 namespace FlightsFinder.Controllers
 {
     [Route("api/[controller]")]
@@ -31,9 +33,13 @@ namespace FlightsFinder.Controllers
         }
         [HttpPost("[action]")]
         [Route("flights")]
-        public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, int people)
+        public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
+         string destinationPlace, int people)
         {
-            return api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
+            Place OriginPlaceObject = JsonConvert.DeserializeObject<Place>(originPlace);
+            Place destinationPlaceObject = JsonConvert.DeserializeObject<Place>(destinationPlace);
+            return api.getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject,
+             "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
         }
     }
 }

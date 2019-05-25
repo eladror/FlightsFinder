@@ -14,7 +14,6 @@ import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntil
 export class SearchFlightsComponent {
   tripOptions: Trip[];
   whereTo = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
   tripType = 'roundTrip';
   departureDate = new FormControl(new Date());
   returnDate = new FormControl(new Date());
@@ -31,33 +30,25 @@ export class SearchFlightsComponent {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap(val => {
-          return this.filter(val || '');
+          return this.getFlightPlacesFromServer(val || '');
         })
       );
 
-      this.toOptions = this.whereTo.valueChanges
+    this.toOptions = this.whereTo.valueChanges
       .pipe(
         startWith(null),
         debounceTime(200),
         distinctUntilChanged(),
         switchMap(val => {
-          return this.filter(val || '');
+          return this.getFlightPlacesFromServer(val || '');
         })
       );
   }
 
-  filter(val: string): Observable<any[]> {
+  getFlightPlacesFromServer(val: string): Observable<any[]> {
     const params = new HttpParams().set('query', val);
-    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params })
-      .pipe(
-        map(response => response.filter(option => {
-          return option.placeName.toLowerCase().indexOf(val.toLowerCase()) === 0;
-        }))
-      );
+    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params }).pipe();
   }
-
-
-
 
   isOneWay() {
     return this.tripType === 'oneWay';
@@ -68,14 +59,15 @@ export class SearchFlightsComponent {
   }
 
   onSearch() {
-    const params: HttpParams = new HttpParams();
-    params.append('outboundDate', this.departureDate.value);
-    params.append('inboundDate', this.returnDate.value);
-    params.append('originPlace', this.whereFrom.value);
-    params.append('destinationPlace', this.whereTo.value);
-    params.append('people', '2');
+    const paaram = new HttpParams()
+      .append('outboundDate', this.departureDate.value.toISOString())
+      .append('inboundDate', this.returnDate.value.toISOString())
+      .append('originPlace', JSON.stringify(this.whereFrom.value))
+      .append('destinationPlace', JSON.stringify(this.whereTo.value))
+      .append('people', '2');
 
-    this.http.get<Trip[]>(this.baseUrl + 'api/SkyScanner/flights', { params: params })
+
+    this.http.post<Trip[]>(this.baseUrl + 'api/SkyScanner/flights', paaram)
       .subscribe(tripOptions => {
         this.tripOptions = [{
           agents: 'el-al', 'arrive': '12/12/19', departure: '01/12/19',
@@ -83,6 +75,10 @@ export class SearchFlightsComponent {
         }];
       },
         error => console.error(error));
+  }
+
+  displayFn(option: any) {
+    return option ? option.placeName + ' (' + option.airportId + ')' : option;
   }
 }
 

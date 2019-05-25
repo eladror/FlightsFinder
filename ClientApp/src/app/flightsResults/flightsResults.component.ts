@@ -49,11 +49,7 @@ export class FlightsResultsComponent {
   filter(val: string): Observable<any[]> {
     const params = new HttpParams().set('query', val);
     return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params })
-      .pipe(
-        map(response => response.filter(option => {
-          return option.placeName.toLowerCase().indexOf(val.toLowerCase()) === 0;
-        }))
-      );
+      .pipe();
   }
 
 
