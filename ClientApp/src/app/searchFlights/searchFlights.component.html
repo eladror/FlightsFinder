@@ -7,12 +7,14 @@
   </div>
   <div>
     <form (ngSubmit)="onSearch()">
-      <mat-form-field>
+      <mat-form-field class="autocomplete-field"> 
         <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
-        <mat-autocomplete #autoFrom="matAutocomplete">
-          <mat-option *ngFor="let option of fromOptions | async" [value]="option.placeName">
+        <mat-autocomplete #autoFrom="matAutocomplete"  [displayWith]="displayFn">
+          <mat-option *ngFor="let option of fromOptions | async"
+            [value]="option">
             <span class="country-name">{{ option.countryName }}</span> -
             <span class="place-name">{{ option.placeName }}</span>
+            <span class="airport-id">({{ option.airportId }})</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -21,8 +23,8 @@
       </button>
       <mat-form-field>
         <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
-        <mat-autocomplete #autoTo="matAutocomplete">
-          <mat-option *ngFor="let option of toOptions | async" [value]="option.placeName">
+        <mat-autocomplete #autoTo="matAutocomplete"  [displayWith]="displayFn"> 
+          <mat-option *ngFor="let option of toOptions | async" [value]="option">
             <span class="country-name">{{ option.countryName }}</span> -
             <span class="place-name">{{ option.placeName }}</span>
           </mat-option>
@@ -47,25 +49,6 @@
     </form>
   </div>
   <div class="trips-options">
-    <table class='table table-striped' *ngIf="tripOptions">
-      <thead>
-        <tr>
-          <th>agents</th>
-          <th>departure</th>
-          <th>arrive</th>
-          <th>inbound</th>
-          <th>outbound</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let trip of tripOptions">
-          <td>{{ trip.agents }}</td>
-          <td>{{ trip.departure }}</td>
-          <td>{{ trip.arrive }}</td>
-          <td>{{ trip.inbound }}</td>
-          <td>{{ trip.outbound }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <app-flights-results [flightsResults]="tripOptions"></app-flights-results>
   </div>
 </div>

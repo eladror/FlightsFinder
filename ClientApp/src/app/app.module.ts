@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { SearchFlightsComponent } from './searchFlights/searchFlights.component';
+import { FlightsResultsComponent } from './flightsResults/flightsResults.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
@@ -30,6 +31,7 @@ export class AngularMaterialModule { }
   declarations: [
     AppComponent,
     SearchFlightsComponent,
+    FlightsResultsComponent,
     HomeComponent,
     CounterComponent,
     FetchDataComponent

@@ -1,19 +1,20 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { SafeHtml } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-search-flights',
-  templateUrl: './searchFlights.component.html',
-  styleUrls: ['./searchFlights.component.css']
+  selector: 'app-flights-results',
+  templateUrl: './flightsResults.component.html',
+  styleUrls: ['./flightsResults.component.css']
 })
 
-export class SearchFlightsComponent {
+export class FlightsResultsComponent {
+  @Input() flightsResults: Trip[];
   tripOptions: Trip[];
   whereTo = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
   tripType = 'roundTrip';
   departureDate = new FormControl(new Date());
   returnDate = new FormControl(new Date());
@@ -30,25 +31,29 @@ export class SearchFlightsComponent {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap(val => {
-          return this.getFlightPlacesFromServer(val || '');
+          return this.filter(val || '');
         })
       );
 
-    this.toOptions = this.whereTo.valueChanges
+      this.toOptions = this.whereTo.valueChanges
       .pipe(
         startWith(null),
         debounceTime(200),
         distinctUntilChanged(),
         switchMap(val => {
-          return this.getFlightPlacesFromServer(val || '');
+          return this.filter(val || '');
         })
       );
   }
 
-  getFlightPlacesFromServer(val: string): Observable<any[]> {
+  filter(val: string): Observable<any[]> {
     const params = new HttpParams().set('query', val);
-    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params }).pipe();
+    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params })
+      .pipe();
   }
+
+
+
 
   isOneWay() {
     return this.tripType === 'oneWay';
@@ -59,15 +64,14 @@ export class SearchFlightsComponent {
   }
 
   onSearch() {
-    const paaram = new HttpParams()
-      .append('outboundDate', this.departureDate.value.toISOString())
-      .append('inboundDate', this.returnDate.value.toISOString())
-      .append('originPlace', JSON.stringify(this.whereFrom.value))
-      .append('destinationPlace', JSON.stringify(this.whereTo.value))
-      .append('people', '2');
+    const params: HttpParams = new HttpParams();
+    params.append('outboundDate', this.departureDate.value);
+    params.append('inboundDate', this.returnDate.value);
+    params.append('originPlace', this.whereFrom.value);
+    params.append('destinationPlace', this.whereTo.value);
+    params.append('people', '2');
 
-
-    this.http.post<Trip[]>(this.baseUrl + 'api/SkyScanner/flights', paaram)
+    this.http.get<Trip[]>(this.baseUrl + 'api/SkyScanner/flights', { params: params })
       .subscribe(tripOptions => {
         this.tripOptions = [{
           agents: 'el-al', 'arrive': '12/12/19', departure: '01/12/19',
@@ -75,10 +79,6 @@ export class SearchFlightsComponent {
         }];
       },
         error => console.error(error));
-  }
-
-  displayFn(option: any) {
-    return option ? option.placeName + ' (' + option.airportId + ')' : option;
   }
 }
 

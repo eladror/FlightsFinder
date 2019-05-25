@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FlightsFinder.Controllers.SkyScanner;
+using Newtonsoft.Json;
+
 namespace FlightsFinder.Controllers
 {
     [Route("api/[controller]")]
@@ -38,22 +40,34 @@ namespace FlightsFinder.Controllers
         }
         [HttpPost("[action]")]
         [Route("flights")]
-        public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, int people)
+        public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
+         string destinationPlace, int people)
         {
             if (inboundDate == null)
             {
                 inboundDate = DateTime.Now.AddDays(5);
                 outboundDate = inboundDate.AddDays(5);
             }
-            if (originPlace == null)
+            Place OriginPlaceObject;
+            Place destinationPlaceObject;
+            if (originPlace == null || originPlace == "")
             {
-                originPlace = defaultOrigin;
+                OriginPlaceObject = defaultOrigin;
+            }
+            else
+            {
+                OriginPlaceObject = JsonConvert.DeserializeObject<Place>(originPlace);
             }
             if (destinationPlace == null)
             {
-                destinationPlace = defaultDestination[rand.Next(defaultDestination.Length)];
+                destinationPlaceObject = defaultDestination[rand.Next(defaultDestination.Length)];
             }
-            return api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
+            else
+            {
+                destinationPlaceObject = JsonConvert.DeserializeObject<Place>(destinationPlace);
+            }
+            return api.getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject,
+             "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
         }
     }
 }

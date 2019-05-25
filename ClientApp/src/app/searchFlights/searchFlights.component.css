@@ -17,6 +17,10 @@
     margin-right: 40px;
 }
 
-.trips-options{
-    margin-top: 30px;
+.autocomplete-field{
+    /* width: 200px; */
+}
+
+.airport-id{
+    font-weight: bold;
 }

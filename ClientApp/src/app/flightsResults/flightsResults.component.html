@@ -1,0 +1,22 @@
+<div class="trips-options">
+        <table class='table table-striped' *ngIf="flightsResults">
+          <thead>
+            <tr>
+              <th>agents</th>
+              <th>departure</th>
+              <th>arrive</th>
+              <th>inbound</th>
+              <th>outbound</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trip of flightsResults">
+              <td>{{ trip.agents }}</td>
+              <td>{{ trip.departure }}</td>
+              <td>{{ trip.arrive }}</td>
+              <td>{{ trip.inbound }}</td>
+              <td>{{ trip.outbound }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
