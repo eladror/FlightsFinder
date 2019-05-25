@@ -213,10 +213,10 @@ namespace FlightsFinder.Controllers.SkyScanner
         [JsonProperty("ArrivalDateTime")]
         public DateTimeOffset ArrivalDateTime { get; set; }
 
-        [JsonProperty("ApiCarrier")]
+        [JsonProperty("Carrier")]
         public long ApiCarrier { get; set; }
 
-        [JsonProperty("OperatingApiCarrier")]
+        [JsonProperty("OperatingCarrier")]
         public long OperatingApiCarrier { get; set; }
 
         [JsonProperty("Duration")]

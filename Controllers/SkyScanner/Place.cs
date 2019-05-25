@@ -4,9 +4,15 @@ namespace FlightsFinder.Controllers.SkyScanner
 {
     public class Place
     {
+        public static Place CreatePlace(ApiFlightPlace place)
+        {
+            Place p = new Place();
+            p.placeId = place.Code;
+            p.placeName = place.Name;
+            return p;
+        }
         public string placeId { get; set; }
         public string placeName { get; set; }
-        public string countryId { get; set; }
         public string cityId { get; set; }
         public string countryName { get; set; }
         public override string ToString()
@@ -14,7 +20,7 @@ namespace FlightsFinder.Controllers.SkyScanner
             return this.placeId;
         }
     }
-    class ApiPlace
+    public class ApiPlace
     {
         [JsonProperty("PlaceId")]
         public long PlaceId { get; set; }

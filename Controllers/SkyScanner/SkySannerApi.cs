@@ -158,23 +158,55 @@ namespace FlightsFinder.Controllers.SkyScanner
             var sessionId = locations.Current.Substring(locations.Current.LastIndexOf('/') + 1);
             response = await client.GetAsync(getUri + sessionId);
             validateResponse(response);
-            var responseString = await response.Content.ReadAsStringAsync();
-            FlightResult res = JsonConvert.DeserializeObject<FlightResult>(responseString);
+            var responseString = response.Content.ReadAsStringAsync().Result;
+            FlightResult res;
+            try
+            {
+                res = JsonConvert.DeserializeObject<FlightResult>(responseString);
+            }
+            catch
+            {
+                responseString = response.Content.ReadAsStringAsync().Result;
+                res = JsonConvert.DeserializeObject<FlightResult>(responseString);
+            }
             var legs = toDic(res.Legs, leg => leg.Id);
             var agents = toDic(res.Agents, agent => agent.Id);
             var places = toDic(res.ApiFlightPlaces, place => place.Id);
             var segments = toDic(res.Segments, segment => segment.Id);
             var carriers = toDic(res.Carriers, carrier => carrier.Id);
+            Func<Leg, FlightOption> createFlightOption = leg =>
+            {
+                FlightOption option = new FlightOption();
+                option.arrive = leg.Arrival.DateTime;
+                option.departure = leg.Departure.DateTime;
+                option.duration = (int)leg.Duration;
+                option.flights = leg.SegmentIds.Select(segId =>
+                {
+                    Flight flight = new Flight();
+                    flight.arrive = segments[segId].ArrivalDateTime.DateTime;
+                    flight.departure = segments[segId].DepartureDateTime.DateTime;
+                    flight.carrier = new Carrier(carriers[segments[segId].ApiCarrier]);
+                    flight.destinationPlace = Place.CreatePlace(places[segments[segId].DestinationStation]);
+                    flight.originPlace = Place.CreatePlace(places[segments[segId].OriginStation]);
+                    flight.flightNumber = (int)segments[segId].FlightNumber;
+                    flight.duration = (int)segments[segId].Duration;
+                    return flight;
+                }).ToList();
+                return option;
+            };
             return res.Itineraries.Select(itin =>
             {
-                List<Agent> initAgents = itin.PricingOptions.Select(priceOption =>
-                {
-                    return new Agent();
-                }).ToList();
                 Trip t = new Trip();
-                t.arrive = legs[itin.InboundLegId].Arrival.DateTime;
-                t.departure = legs[itin.OutboundLegId].Departure.DateTime;
-                t.agents = initAgents;
+                t.outbound = createFlightOption(legs[itin.OutboundLegId]);
+                t.inbound = createFlightOption(legs[itin.InboundLegId]);
+                t.agents = itin.PricingOptions.Select(po =>
+                {
+                    Agent agent = new Agent();
+                    agent.Id = agents[po.Agents[0]].Id;
+                    agent.Name = agents[po.Agents[0]].Name;
+                    agent.price = (int)po.Price;
+                    return agent;
+                }).ToList();
                 return t;
             }).ToList();
         }
