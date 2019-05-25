@@ -15,6 +15,13 @@ namespace FlightsFinder.Controllers.SkyScanner
         public string placeName { get; set; }
         public string cityId { get; set; }
         public string countryName { get; set; }
+        public string airportId
+        {
+            get
+            {
+                return placeId.Split("-")[0];
+            }
+        }
         public override string ToString()
         {
             return this.placeId;
