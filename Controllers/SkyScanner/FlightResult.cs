@@ -228,7 +228,7 @@ namespace FlightsFinder.Controllers.SkyScanner
         [JsonProperty("Directionality")]
         public Directionality Directionality { get; set; }
     }
-    public enum Status { UpdatesComplete };
+    public enum Status { UpdatesComplete, UpdatesPending };
     public enum Directionality { Inbound, Outbound };
     public enum ApiFlightPlaceType { Airport, City, Country };
     public enum Method { Put };

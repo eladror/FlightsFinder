@@ -7,7 +7,8 @@ namespace FlightsFinder.Controllers.SkyScanner
     {
         [JsonProperty("Id")]
         public long Id { get; set; }
-
+        [JsonProperty("BookingUrl")]
+        public Uri BookingUrl { get; set; }
         [JsonProperty("Name")]
         public string Name { get; set; }
         public int price { get; set; }

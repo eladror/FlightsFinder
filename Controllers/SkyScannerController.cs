@@ -40,7 +40,7 @@ namespace FlightsFinder.Controllers
         }
         [HttpPost("[action]")]
         [Route("flights")]
-        public IEnumerable<Trip> GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
+        public ActionResult GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
          string destinationPlace, int people)
         {
             if (inboundDate == null)
@@ -66,8 +66,16 @@ namespace FlightsFinder.Controllers
             {
                 destinationPlaceObject = JsonConvert.DeserializeObject<Place>(destinationPlace);
             }
-            return api.getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject,
-             "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
+            try
+            {
+                return Json(api.getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject,
+                 "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result);
+            }
+            catch (AggregateException e)
+            {
+                Response.StatusCode = 500;
+                return Content(e.InnerException.ToString());
+            }
         }
     }
 }

@@ -205,6 +205,7 @@ namespace FlightsFinder.Controllers.SkyScanner
                     agent.Id = agents[po.Agents[0]].Id;
                     agent.Name = agents[po.Agents[0]].Name;
                     agent.price = (int)po.Price;
+                    agent.BookingUrl = po.DeeplinkUrl;
                     return agent;
                 }).ToList();
                 return t;
