@@ -1,0 +1,22 @@
+.flight-option-title{
+    font-weight: bold;
+    width: 80px;
+}
+
+.title-container, .duration-container{
+    display: flex;
+}
+
+.flight-option-header{
+    display: flex;
+    justify-content: space-between;
+    width: 95%
+}
+
+.flight-option-header > div{
+    align-self: center;
+}
+
+mat-icon{
+    margin-right: 5px; 
+}

@@ -1,4 +1,4 @@
-<div class="search-form">
+<div class="main-page">
   <div>
     <mat-radio-group [(ngModel)]="tripType">
       <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
@@ -6,15 +6,14 @@
     </mat-radio-group>
   </div>
   <div>
-    <form (ngSubmit)="onSearch()">
+    <form (ngSubmit)="onSearch()" class="search-form">
       <mat-form-field class="autocomplete-field"> 
         <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
         <mat-autocomplete #autoFrom="matAutocomplete"  [displayWith]="displayFn">
           <mat-option *ngFor="let option of fromOptions | async"
             [value]="option">
-            <span class="country-name">{{ option.countryName }}</span> -
-            <span class="place-name">{{ option.placeName }}</span>
-            <span class="airport-id">({{ option.airportId }})</span>
+            <span class="place-name">{{ displayFn(option) }}</span> -   
+            <span class="country-name">{{ option.countryName }}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -25,8 +24,8 @@
         <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
         <mat-autocomplete #autoTo="matAutocomplete"  [displayWith]="displayFn"> 
           <mat-option *ngFor="let option of toOptions | async" [value]="option">
-            <span class="country-name">{{ option.countryName }}</span> -
-            <span class="place-name">{{ option.placeName }}</span>
+            <span class="place-name">{{ displayFn(option) }}</span> -   
+            <span class="country-name">{{ option.countryName }}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>

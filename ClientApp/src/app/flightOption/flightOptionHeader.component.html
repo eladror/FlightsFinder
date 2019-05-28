@@ -1,0 +1,25 @@
+<div class="flight-option-header">
+    <div class="title-container">
+        <div *ngIf="isOutbound" class="flight-option-title">{{outboundTitle}}</div>
+        <div *ngIf="!isOutbound" class="flight-option-title">{{inboundTitle}}</div>
+    </div>
+    <div>
+        <div *ngIf="isOutbound">
+            <mat-icon color="accent">flight_takeoff</mat-icon>
+            {{DataDisplayService.getDateDispaly(flightOption.departure)}}
+        </div>
+        <div *ngIf="!isOutbound">
+            <mat-icon color="accent">flight_land</mat-icon>
+            {{DataDisplayService.getDateDispaly(flightOption.arrive)}}
+        </div>
+    </div>
+    <div>
+        <div>{{DataDisplayService.getStopsDisplay(flightOption.flights.length)}}</div>
+    </div>
+    <div class="duration-container">
+        <mat-icon color="accent">watch_later</mat-icon>
+        <div>
+            {{DataDisplayService.getMinutesToHoursDisplay(flightOption.duration)}}
+        </div>
+    </div>
+</div>

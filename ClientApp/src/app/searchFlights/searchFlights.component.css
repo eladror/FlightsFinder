@@ -1,7 +1,11 @@
-.search-form{
+.main-page{
     width: 850px;
     margin: auto;
     margin-top: 50px;
+}
+
+.search-form{
+    margin-bottom: 20px;
 }
 
 .date-picker-field{

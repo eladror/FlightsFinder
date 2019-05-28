@@ -22,7 +22,6 @@ export class SearchFlightsComponent {
   fromOptions: Observable<any[]>;
   toOptions: Observable<any[]>;
 
-
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
     this.fromOptions = this.whereFrom.valueChanges
       .pipe(
@@ -55,24 +54,23 @@ export class SearchFlightsComponent {
   }
 
   swapDestinations() {
-    alert('swap');
   }
 
   onSearch() {
-    const paaram = new HttpParams()
-      .append('outboundDate', this.departureDate.value.toISOString())
-      .append('inboundDate', this.returnDate.value.toISOString())
+    const whereFrom: string = this.displayFn(this.whereFrom.value);
+    const whereTo = this.displayFn(this.whereTo.value);
+
+    const param = new HttpParams()
+      .append('outboundDate', this.departureDate.value ? this.departureDate.value.toISOString() : null)
+      .append('inboundDate', this.returnDate.value ? this.returnDate.value.toISOString() : null)
       .append('originPlace', JSON.stringify(this.whereFrom.value))
       .append('destinationPlace', JSON.stringify(this.whereTo.value))
       .append('people', '2');
 
-
-    this.http.post<Trip[]>(this.baseUrl + 'api/SkyScanner/flights', paaram)
-      .subscribe(tripOptions => {
-        this.tripOptions = [{
-          agents: 'el-al', 'arrive': '12/12/19', departure: '01/12/19',
-          inbound: 'tlv', outbound: 'jfk'
-        }];
+    this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
+      .subscribe((tripOptions: any[]) => {
+        this.tripOptions = this.formatResults(tripOptions, whereFrom, whereTo).filter(result =>
+          (result.outbound.flights.length === 1 && result.inbound.flights.length === 1));
       },
         error => console.error(error));
   }
@@ -80,12 +78,36 @@ export class SearchFlightsComponent {
   displayFn(option: any) {
     return option ? option.placeName + ' (' + option.airportId + ')' : option;
   }
-}
 
-interface Trip {
-  agents: string;
-  departure: string;
-  arrive: string;
-  inbound: string;
-  outbound: string;
+  formatResults(results: any[], whereFrom: string, whereTo: string): Trip[] {
+    results.forEach(trip => {
+      trip.whereFrom = whereFrom;
+      trip.whereTo = whereTo;
+
+      trip.lowestPriceAgent = trip.agents.sort((a, b) => (a.price) - (b.price))[0];
+
+      trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);
+      trip.outbound.departure = this.setDateValue(trip.outbound.departure);
+      trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
+      trip.inbound.departure = this.setDateValue(trip.inbound.departure);
+
+      trip.inbound.flights.forEach(flight => {
+        flight.arrive = this.setDateValue(flight.arrive);
+        flight.departure = this.setDateValue(flight.departure);
+      });
+
+      trip.outbound.flights.forEach(flight => {
+        flight.arrive = this.setDateValue(flight.arrive);
+        flight.departure = this.setDateValue(flight.departure);
+      });
+    });
+
+    return results;
+  }
+
+  setDateValue(date: string): Date {
+    if (date) {
+      return new Date(date);
+    }
+  }
 }

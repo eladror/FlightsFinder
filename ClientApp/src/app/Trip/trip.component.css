@@ -1,0 +1,26 @@
+.trip{
+    margin-bottom: 20px;
+}
+
+.trip-title{
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.flight-option-header{
+    width: 95%;
+}
+
+.card-content{
+    display: flex;
+}
+
+.accordion-container{
+    flex-grow: 1;
+}
+
+.select-price-container{
+    margin: 0 14px;
+    text-align: center;
+    font-weight: bold;
+}

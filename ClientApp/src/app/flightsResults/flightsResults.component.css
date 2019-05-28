@@ -1,3 +1,7 @@
 .trips-options{
     margin-top: 30px;
 }
+
+.trips-options .mat-card-title{
+    display: flex;
+}
