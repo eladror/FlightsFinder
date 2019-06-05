@@ -1,5 +1,5 @@
 .main-page{
-    width: 850px;
+    width: 950px;
     margin: auto;
     margin-top: 50px;
 }
@@ -13,8 +13,7 @@
 }
 
 .search-button-div{
-    width: 150px;
-    margin: auto;
+    text-align: center;
 }
 
 .radio-button-field{
@@ -22,9 +21,19 @@
 }
 
 .autocomplete-field{
-    /* width: 200px; */
+    width: 200px;
 }
 
 .airport-id{
     font-weight: bold;
 }
+
+.is-loading ::ng-deep .mat-option-text {
+    display: flex;
+    justify-content: center;
+  }
+
+  .form-fields{
+    display: flex;
+    justify-content: center; 
+  }

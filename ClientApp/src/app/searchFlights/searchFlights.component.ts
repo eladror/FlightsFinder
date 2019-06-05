@@ -2,8 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { SafeHtml } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
-import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first, finalize } from 'rxjs/operators';
+import { SmartFlightsFilterService } from '../Utils/smartFlightsFilter.service';
+import { QualityParam, ParamTypes } from '../interfaces/QualityParam';
 
 @Component({
   selector: 'app-search-flights',
@@ -12,6 +14,10 @@ import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntil
 })
 
 export class SearchFlightsComponent {
+  showErrorMessage = false;
+  showNoResultMessage = false;
+
+  minAutocompliteLength = 2;
   tripOptions: Trip[];
   whereTo = new FormControl();
   tripType = 'roundTrip';
@@ -19,34 +25,50 @@ export class SearchFlightsComponent {
   returnDate = new FormControl(new Date());
   whereFrom = new FormControl();
 
-  fromOptions: Observable<any[]>;
-  toOptions: Observable<any[]>;
+  isLoadingFromOptions = false;
+  isLoadingToOptions = false;
+  fromOptions: any[];
+  toOptions: any[];
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
-    this.fromOptions = this.whereFrom.valueChanges
+  qualityParams: QualityParam[] = [
+    { paramType: ParamTypes.price, paramImportancePrecent: 40},
+    { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
+    { paramType: ParamTypes.numberOfStops, paramImportancePrecent: 20 }
+  ];
+
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
+    private smartFlightsFilterService: SmartFlightsFilterService) {
+    this.whereFrom.valueChanges
       .pipe(
         startWith(null),
-        debounceTime(200),
+        debounceTime(500),
+        tap(() => { this.isLoadingFromOptions = true; }),
         distinctUntilChanged(),
-        switchMap(val => {
-          return this.getFlightPlacesFromServer(val || '');
-        })
-      );
+        switchMap(val =>
+          this.getFlightPlacesFromServer(val || '')
+            .pipe(finalize(() => this.isLoadingFromOptions = false))
+        )
+      ).subscribe(result => this.fromOptions = result);
 
-    this.toOptions = this.whereTo.valueChanges
+    this.whereTo.valueChanges
       .pipe(
         startWith(null),
-        debounceTime(200),
+        debounceTime(500),
+        tap(() => this.isLoadingToOptions = true),
         distinctUntilChanged(),
-        switchMap(val => {
-          return this.getFlightPlacesFromServer(val || '');
-        })
-      );
+        switchMap(val =>
+          this.getFlightPlacesFromServer(val || '')
+            .pipe(finalize(() => this.isLoadingToOptions = false))
+        )
+      ).subscribe(re => { this.toOptions = re; });
   }
 
   getFlightPlacesFromServer(val: string): Observable<any[]> {
-    const params = new HttpParams().set('query', val);
-    return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params }).pipe();
+    if (val && val.length >= this.minAutocompliteLength) {
+      const params = new HttpParams().set('query', val);
+      return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params });
+    }
+    return of([]);
   }
 
   isOneWay() {
@@ -57,6 +79,8 @@ export class SearchFlightsComponent {
   }
 
   onSearch() {
+    this.showErrorMessage = false;
+    this.showNoResultMessage = false;
     const whereFrom: string = this.displayFn(this.whereFrom.value);
     const whereTo = this.displayFn(this.whereTo.value);
 
@@ -69,10 +93,20 @@ export class SearchFlightsComponent {
 
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
-        this.tripOptions = this.formatResults(tripOptions, whereFrom, whereTo).filter(result =>
-          (result.outbound.flights.length === 1 && result.inbound.flights.length === 1));
+        if (tripOptions.length === 0) {
+          this.showNoResultMessage = true;
+          return;
+        }
+
+        this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
+          this.formatResults(tripOptions, whereFrom, whereTo), this.qualityParams).filter(result =>
+            (result.outbound.flights.length === 1 && result.inbound.flights.length === 1));
       },
-        error => console.error(error));
+        error => {
+          this.showErrorMessage = true;
+          this.tripOptions = [];
+          console.error(error);
+        });
   }
 
   displayFn(option: any) {

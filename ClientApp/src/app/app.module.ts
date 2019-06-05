@@ -13,24 +13,27 @@ import {
   MatToolbarModule, MatTabsModule, MatIconModule, MatInputModule,
   MatFormFieldModule, MatAutocompleteModule, MatButtonModule,
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
-  MatGridListModule, MatDividerModule, MatExpansionModule
+  MatGridListModule, MatDividerModule, MatExpansionModule, MatProgressSpinnerModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
 import { TripComponent } from './Trip/trip.component';
 import { FlightOptionHeaderComponent } from './flightOption/flightOptionHeader.component';
+import { ErrorMessageComponent } from './errorMessage/errorMessage.component';
+import { NoResultsMessageComponent } from './noResultsMessage/noResultsMessage.component';
+import { SmartFlightsFilterService } from './Utils/smartFlightsFilter.service';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule],
 })
 export class AngularMaterialModule { }
 @NgModule({
@@ -41,6 +44,8 @@ export class AngularMaterialModule { }
     TripComponent,
     FlightComponent,
     FlightOptionHeaderComponent,
+    ErrorMessageComponent,
+    NoResultsMessageComponent,
     HomeComponent
   ],
   imports: [
@@ -53,7 +58,7 @@ export class AngularMaterialModule { }
     ]),
     AngularMaterialModule
   ],
-  providers: [DataDisplayService],
+  providers: [DataDisplayService, SmartFlightsFilterService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
