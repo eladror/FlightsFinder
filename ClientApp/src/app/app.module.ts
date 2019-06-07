@@ -23,6 +23,7 @@ import { ErrorMessageComponent } from './errorMessage/errorMessage.component';
 import { NoResultsMessageComponent } from './noResultsMessage/noResultsMessage.component';
 import { SmartFlightsFilterService } from './Utils/smartFlightsFilter.service';
 import { LoadingBarComponent } from './loadingBar/loadingBar.component';
+import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails.component';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
@@ -48,6 +49,7 @@ export class AngularMaterialModule { }
     ErrorMessageComponent,
     NoResultsMessageComponent,
     LoadingBarComponent,
+    FlightOptionDetailsComponent,
     HomeComponent
   ],
   imports: [

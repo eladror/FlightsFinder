@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DataDisplayService } from '../Utils/dataDisplay.service';
 
 @Component({
-  selector: 'app-flight-header-option',
+  selector: 'app-flight-option-header',
   templateUrl: './flightOptionHeader.component.html',
   styleUrls: ['./flightOptionHeader.component.css']
 })

@@ -1,0 +1,49 @@
+.main-page{
+    width: 950px;
+    margin: auto;
+    margin-top: 50px;
+
+    .form-container{
+
+
+        .search-form{
+            margin-bottom: 20px;
+        }
+
+        .date-picker-field{
+            margin-left: 20px;
+        }
+        
+        .search-button-div{
+            text-align: center;
+        }
+        
+        .radio-button-field{
+            margin-right: 40px;
+        }
+        
+        .autocomplete-field{
+            width: 200px;
+        }
+        
+        .airport-id{
+            font-weight: bold;
+        }
+    }
+}
+
+.is-loading ::ng-deep .mat-option-text {
+    display: flex;
+    justify-content: center;
+  }
+
+  .form-fields{
+    display: flex;
+    justify-content: center; 
+  }
+  .results-container{
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 30px;
+    transition: 1s linear; 
+  }

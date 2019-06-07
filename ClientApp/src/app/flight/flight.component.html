@@ -1,6 +1,40 @@
-<mat-grid-list cols="4" rowHeight="1:1">
-        <mat-grid-tile>1</mat-grid-tile>
-        <mat-grid-tile>2</mat-grid-tile>
-        <mat-grid-tile>3</mat-grid-tile>
-        <mat-grid-tile>4</mat-grid-tile>
-    </mat-grid-list>
+<div class="flight-display">
+    <div class="carrier-display">
+        <div class="small-text">
+            carrier
+        </div>
+        <div class="bold-text">
+            {{flight.carrier.Name}}
+        </div>
+        <div>
+            flight {{flight.flightNumber}}
+        </div>
+    </div>
+    <div class="place-display">
+        <div class="small-text">
+            departure
+        </div>
+        <div class="bold-text">{{dataDisplayService.getTimeDispaly(flight.departure)}}</div>
+        <div class="bold-text">{{displayFn(flight.originPlace)}}</div>
+        <div>{{dataDisplayService.getDateDispaly(flight.departure)}}</div>
+    </div>
+    <div class="duration-display">
+        <div class="long-arrow"></div>
+        <div class="time-display">
+            {{dataDisplayService.getMinutesToHoursDisplay(flight.duration)}}
+        </div>
+    </div>
+    <div class="place-display">
+        <div class="small-text">
+            arrive
+        </div>
+        <div class="bold-text arrive-time">
+            {{dataDisplayService.getTimeDispaly(flight.arrive)}}
+            <div *ngIf="(flight.daysDiff > 0)" class="days-diff">
+                +{{flight.daysDiff}}
+            </div>
+        </div>
+        <div class="bold-text">{{displayFn(flight.destinationPlace)}}</div>
+        <div>{{dataDisplayService.getDateDispaly(flight.arrive)}}</div>
+    </div>
+</div>

@@ -1,16 +1,22 @@
 <div class="flight-option-header">
     <div class="title-container">
-        <div *ngIf="isOutbound" class="flight-option-title">{{outboundTitle}}</div>
-        <div *ngIf="!isOutbound" class="flight-option-title">{{inboundTitle}}</div>
+        <div *ngIf="isOutbound" class="flight-option-title">
+            <mat-icon color="accent">flight_takeoff</mat-icon>
+            {{outboundTitle}}
+        </div>
+        <div *ngIf="!isOutbound" class="flight-option-title">
+            <mat-icon color="accent" class="flip">flight_land</mat-icon>
+            {{inboundTitle}}
+        </div>
     </div>
     <div>
-        <div *ngIf="isOutbound">
-            <mat-icon color="accent">flight_takeoff</mat-icon>
-            {{DataDisplayService.getDateDispaly(flightOption.departure)}}
-        </div>
-        <div *ngIf="!isOutbound">
-            <mat-icon color="accent">flight_land</mat-icon>
-            {{DataDisplayService.getDateDispaly(flightOption.arrive)}}
+        <div class="flight-hours">
+            {{DataDisplayService.getTimeDispaly(flightOption.departure)}}
+            <mat-icon color="accent">arrow_right_alt</mat-icon>
+            {{DataDisplayService.getTimeDispaly(flightOption.arrive)}}
+            <div *ngIf="(flightOption.daysDiff > 0)" class="days-diff">
+                +{{flightOption.daysDiff}}
+            </div>
         </div>
     </div>
     <div>

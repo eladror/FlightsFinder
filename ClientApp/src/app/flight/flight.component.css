@@ -1,0 +1,45 @@
+.flight-display{
+  display: flex;  
+}
+
+.duration-display{
+    margin: 0 15px;
+    align-self:center;
+}
+
+.time-display{
+    text-align: center;
+}
+
+.long-arrow{
+    background-image: url('../../assets/longArrowRight.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 20px;
+    width: 85px;
+}
+
+.bold-text{
+font-weight: bold;
+}
+
+.small-text{
+    font-size: 13px;
+    color: #9e9b9b;
+}
+
+.carrier-display{
+    margin-right: 15px;
+    width: 100px;
+}
+
+.days-diff{
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+    width: 10px;
+}
+
+.arrive-time{
+    display: flex;
+}

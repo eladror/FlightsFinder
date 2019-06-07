@@ -1,62 +1,65 @@
 <div class="main-page">
-  <div>
-    <mat-radio-group [(ngModel)]="tripType">
-      <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
-      <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
-    </mat-radio-group>
-  </div>
-  <div>
-    <form (ngSubmit)="onSearch()" class="search-form">
-      <div class="form-fields">
-        <mat-form-field class="autocomplete-field">
-          <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
-          <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
-            <mat-option *ngIf="isLoadingFromOptions" class="is-loading">
-              <mat-spinner diameter="20"></mat-spinner>
-            </mat-option>
-            <ng-container *ngIf="!isLoadingFromOptions">
-              <mat-option *ngFor="let option of fromOptions" [value]="option">
-                <span class="place-name">{{ displayFn(option) }}</span> -
-                <span class="country-name">{{ option.countryName }}</span>
+  <div class="form-container">
+    <div>
+      <mat-radio-group [(ngModel)]="tripType">
+        <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
+        <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div>
+      <form (ngSubmit)="onSearch()" class="search-form">
+        <div class="form-fields">
+          <mat-form-field class="autocomplete-field">
+            <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
+            <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
+              <mat-option *ngIf="isLoadingFromOptions" class="is-loading">
+                <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
-            </ng-container>
-          </mat-autocomplete>
-        </mat-form-field>
-        <button type="button" (click)="swapDestinations()" mat-icon-button color="accent">
-          <mat-icon>swap_horiz</mat-icon>
-        </button>
-        <mat-form-field>
-          <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
-          <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
-            <mat-option *ngIf="isLoadingToOptions" class="is-loading">
-              <mat-spinner diameter="20"></mat-spinner>
-            </mat-option>
-            <ng-container *ngIf="!isLoadingToOptions">
-              <mat-option *ngFor="let option of toOptions" [value]="option">
-                <span class="place-name">{{ displayFn(option) }}</span> -
-                <span class="country-name">{{ option.countryName }}</span>
+              <ng-container *ngIf="!isLoadingFromOptions">
+                <mat-option *ngFor="let option of fromOptions" [value]="option">
+                  <span class="place-name">{{ displayFn(option) }}</span> -
+                  <span class="country-name">{{ option.countryName }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-form-field>
+          <button type="button" (click)="swapDestinations()" mat-icon-button color="accent">
+            <mat-icon>swap_horiz</mat-icon>
+          </button>
+          <mat-form-field>
+            <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
+            <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
+              <mat-option *ngIf="isLoadingToOptions" class="is-loading">
+                <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
-            </ng-container>
-          </mat-autocomplete>
-        </mat-form-field>
-        <mat-form-field class="date-picker-field">
-          <input matInput [matDatepicker]="departurePicker" placeholder="Departure on..." [formControl]="departureDate">
-          <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
-          <mat-datepicker #departurePicker></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field class="date-picker-field">
-          <input [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker" placeholder="Return on..."
-            [formControl]="returnDate">
-          <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
-          <mat-datepicker #returnPicker></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="search-button-div">
-        <button type="submit" mat-raised-button color="accent">Search
-          <mat-icon>search</mat-icon>
-        </button>
-      </div>
-    </form>
+              <ng-container *ngIf="!isLoadingToOptions">
+                <mat-option *ngFor="let option of toOptions" [value]="option">
+                  <span class="place-name">{{ displayFn(option) }}</span> -
+                  <span class="country-name">{{ option.countryName }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field class="date-picker-field">
+            <input matInput [matDatepicker]="departurePicker" placeholder="Departure on..."
+              [formControl]="departureDate">
+            <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
+            <mat-datepicker #departurePicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="date-picker-field">
+            <input [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker" placeholder="Return on..."
+              [formControl]="returnDate">
+            <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
+            <mat-datepicker #returnPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="search-button-div">
+          <button type="submit" mat-raised-button color="accent">Search
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
   <div class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
     <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>

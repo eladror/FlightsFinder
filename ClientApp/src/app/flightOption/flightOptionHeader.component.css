@@ -1,6 +1,7 @@
 .flight-option-title{
     font-weight: bold;
     width: 80px;
+    display: flex;
 }
 
 .title-container, .duration-container{
@@ -10,7 +11,7 @@
 .flight-option-header{
     display: flex;
     justify-content: space-between;
-    width: 95%
+    width: 95%;
 }
 
 .flight-option-header > div{
@@ -19,4 +20,20 @@
 
 mat-icon{
     margin-right: 5px; 
+}
+
+.flip {
+    transform: scaleX(-1)
+}
+
+.flight-hours{
+    display: flex;
+    width: 150px;
+}
+
+.days-diff{
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+    width: 10px;
 }

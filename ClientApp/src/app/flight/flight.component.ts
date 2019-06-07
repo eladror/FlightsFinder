@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DataDisplayService } from '../Utils/dataDisplay.service';
 
 @Component({
   selector: 'app-flight',
@@ -9,6 +10,10 @@ import { Component, Input } from '@angular/core';
 export class FlightComponent {
   @Input() flight: Flight;
 
-  constructor() {
+  constructor(private dataDisplayService: DataDisplayService) {
+  }
+
+  displayFn(place: Place) {
+    return place ? place.placeName + ' (' + place.airportId + ')' : place;
   }
 }

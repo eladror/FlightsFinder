@@ -7,11 +7,12 @@ import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntil
 import { SmartFlightsFilterService } from '../Utils/smartFlightsFilter.service';
 import { QualityParam, ParamTypes } from '../interfaces/QualityParam';
 import { searchState } from '../enums/searchState';
+import { DataDisplayService } from '../Utils/dataDisplay.service';
 
 @Component({
   selector: 'app-search-flights',
   templateUrl: './searchFlights.component.html',
-  styleUrls: ['./searchFlights.component.css']
+  styleUrls: ['./searchFlights.component.scss']
 })
 
 export class SearchFlightsComponent {
@@ -23,9 +24,9 @@ export class SearchFlightsComponent {
   tripOptions: Trip[];
   whereTo = new FormControl();
   tripType = 'roundTrip';
-  departureDate = new FormControl(new Date());
-  returnDate = new FormControl(new Date());
   whereFrom = new FormControl();
+  departureDate: FormControl;
+  returnDate: FormControl;
 
   isLoadingFromOptions = false;
   isLoadingToOptions = false;
@@ -39,7 +40,13 @@ export class SearchFlightsComponent {
   ];
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
-    private smartFlightsFilterService: SmartFlightsFilterService) {
+    private smartFlightsFilterService: SmartFlightsFilterService,
+    private dataDisplayService: DataDisplayService) {
+    this.departureDate = new FormControl(new Date());
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 1);
+    this.returnDate = new FormControl(returnDate);
+
     let fromLoadingRequestNumber = 0;
     let fromFinishedRequestNumber = 0;
     this.whereFrom.valueChanges
@@ -98,6 +105,9 @@ export class SearchFlightsComponent {
   }
 
   swapDestinations() {
+    const dest = this.whereFrom.value;
+    this.whereFrom.setValue(this.whereTo.value);
+    this.whereTo.setValue(dest);
   }
 
   onSearch() {
@@ -121,11 +131,17 @@ export class SearchFlightsComponent {
           return;
         }
 
-        this.setCurrentState(searchState.succsses);
 
         this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
           this.formatResults(tripOptions, whereFrom, whereTo), this.qualityParams).filter(result =>
-            (result.outbound.flights.length === 1 && result.inbound.flights.length === 1));
+            (result.outbound.flights.length <= 2 && result.inbound.flights.length === 1));
+
+        if (this.tripOptions.length === 0) {
+          this.setCurrentState(searchState.noResults);
+          return;
+        }
+
+        this.setCurrentState(searchState.succsses);
       },
         error => {
           this.setCurrentState(searchState.error);
@@ -164,7 +180,7 @@ export class SearchFlightsComponent {
   }
 
   formatResults(results: any[], whereFrom: string, whereTo: string): Trip[] {
-    results.forEach(trip => {
+    results.forEach((trip) => {
       trip.whereFrom = whereFrom;
       trip.whereTo = whereTo;
 
@@ -172,17 +188,22 @@ export class SearchFlightsComponent {
 
       trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);
       trip.outbound.departure = this.setDateValue(trip.outbound.departure);
+      trip.outbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.outbound.departure, trip.outbound.arrive);
       trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
       trip.inbound.departure = this.setDateValue(trip.inbound.departure);
+      trip.inbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.inbound.departure, trip.inbound.arrive);
+
 
       trip.inbound.flights.forEach(flight => {
         flight.arrive = this.setDateValue(flight.arrive);
         flight.departure = this.setDateValue(flight.departure);
+        flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
       });
 
       trip.outbound.flights.forEach(flight => {
         flight.arrive = this.setDateValue(flight.arrive);
         flight.departure = this.setDateValue(flight.departure);
+        flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
       });
     });
 

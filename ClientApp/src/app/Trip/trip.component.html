@@ -9,17 +9,18 @@
             <mat-accordion>
                 <mat-expansion-panel class="flight-option">
                     <mat-expansion-panel-header>
-                        <app-flight-header-option class="flight-option-header" [flightOption]="trip.outbound"
-                            [isOutbound]="true"></app-flight-header-option>
+                        <app-flight-option-header class="flight-option-header" [flightOption]="trip.outbound"
+                            [isOutbound]="true"></app-flight-option-header>
                     </mat-expansion-panel-header>
-                    Details
+                    <app-flight-option-details [flightOption]="trip.outbound"></app-flight-option-details>
                 </mat-expansion-panel>
                 <mat-expansion-panel class="flight-option">
                     <mat-expansion-panel-header>
-                        <app-flight-header-option class="flight-option-header" [flightOption]="trip.inbound"
-                            [isOutbound]="false"></app-flight-header-option>
+                        <app-flight-option-header class="flight-option-header" 
+                        [flightOption]="trip.inbound"
+                            [isOutbound]="false"></app-flight-option-header>
                     </mat-expansion-panel-header>
-                    Details
+                    <app-flight-option-details [flightOption]="trip.inbound"></app-flight-option-details>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
