@@ -197,6 +197,8 @@ namespace FlightsFinder.Controllers.SkyScanner
             return res.Itineraries.Select(itin =>
             {
                 Trip t = new Trip();
+                t.originPlace = originPlace;
+                t.destinationPlace = destinationPlace;
                 t.outbound = createFlightOption(legs[itin.OutboundLegId]);
                 t.inbound = createFlightOption(legs[itin.InboundLegId]);
                 t.agents = itin.PricingOptions.Select(po =>

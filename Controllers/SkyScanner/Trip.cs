@@ -8,5 +8,7 @@ namespace FlightsFinder.Controllers.SkyScanner
         public FlightOption outbound { get; set; }
         public FlightOption inbound { get; set; }
         public List<Agent> agents { get; set; }
+        public Place originPlace { get; set; }
+        public Place destinationPlace { get; set; }
     }
 }
