@@ -1,0 +1,9 @@
+.loading-title{
+    display: flex;
+}
+
+.loading-text{
+    margin-left: 10px;  
+    flex-grow: 1;
+    text-align: center
+}

@@ -13,7 +13,7 @@ import {
   MatToolbarModule, MatTabsModule, MatIconModule, MatInputModule,
   MatFormFieldModule, MatAutocompleteModule, MatButtonModule,
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
-  MatGridListModule, MatDividerModule, MatExpansionModule, MatProgressSpinnerModule
+  MatGridListModule, MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -22,18 +22,19 @@ import { FlightOptionHeaderComponent } from './flightOption/flightOptionHeader.c
 import { ErrorMessageComponent } from './errorMessage/errorMessage.component';
 import { NoResultsMessageComponent } from './noResultsMessage/noResultsMessage.component';
 import { SmartFlightsFilterService } from './Utils/smartFlightsFilter.service';
+import { LoadingBarComponent } from './loadingBar/loadingBar.component';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule],
 })
 export class AngularMaterialModule { }
 @NgModule({
@@ -46,6 +47,7 @@ export class AngularMaterialModule { }
     FlightOptionHeaderComponent,
     ErrorMessageComponent,
     NoResultsMessageComponent,
+    LoadingBarComponent,
     HomeComponent
   ],
   imports: [

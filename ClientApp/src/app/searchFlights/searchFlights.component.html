@@ -58,10 +58,14 @@
       </div>
     </form>
   </div>
-  <app-error-message *ngIf="showErrorMessage"></app-error-message>
-  <app-no-results-message *ngIf="showNoResultMessage">
-  </app-no-results-message>
-  <div class="trips-options">
-    <app-flights-results [flightsResults]="tripOptions"></app-flights-results>
+  <div class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
+    <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>
+    <app-no-results-message *ngIf="currentSearchState === searchStatesEnum.noResults">
+    </app-no-results-message>
+    <app-loading-bar *ngIf="currentSearchState === searchStatesEnum.loading" [message]="loadingMessage"
+      [value]="loadingProgress"></app-loading-bar>
+    <div *ngIf="currentSearchState === searchStatesEnum.succsses" class="trips-options">
+      <app-flights-results [flightsResults]="tripOptions"></app-flights-results>
+    </div>
   </div>
 </div>

@@ -10,7 +10,7 @@ import { DataDisplayService } from '../Utils/dataDisplay.service';
 export class TripComponent {
   @Input() trip: Trip;
 
-  constructor(private DataDisplayService: DataDisplayService) {
+  constructor(private dataDisplayService: DataDisplayService) {
 
   }
 

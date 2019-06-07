@@ -1,56 +1,6 @@
+<div>
+  {{flightsResults.length}} Result found
+</div>
 <div *ngFor="let trip of flightsResults">
   <app-trip [trip]="trip"></app-trip>
 </div>
-
-<!-- <div class="trips-options">
-  <table class='table table-striped' *ngIf="flightsResults">
-    <thead>
-      <tr>
-        <th>agents</th>
-        <th>departure</th>
-        <th>arrive</th>
-        <th>inbound</th>
-        <th>outbound</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let trip of flightsResults">
-        <td>
-          <span *ngFor="let agent of trip.agents">
-            {{agent.Name}}
-          </span>
-        </td>
-        <td>{{ trip.departure }}</td>
-        <td>{{ trip.arrive }}</td>
-        <td>{{ trip.inbound }}</td>
-        <td>{{ trip.outbound }}</td>
-      </tr>
-    </tbody> 
-  </table>
-</div> -->
-
-<!-- <mat-card class="trips-options" *ngFor="let trip of flightsResults">
-  <mat-card-header>
-    <mat-card-title>
-      <div>
-        {{trip.departure}}
-      </div>
-      <div>
-        <i class="material-icons">arrow_right_alt</i>
-      </div>
-      <div>
-        {{trip.arrive}}
-      </div>
-    </mat-card-title>
-    <mat-card-subtitle>2 Stops</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <span *ngFor="let agent of trip.agents">
-      {{agent.Name}} |
-    </span>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button>LIKE</button>
-    <button mat-button>SHARE</button>
-  </mat-card-actions>
-</mat-card> -->

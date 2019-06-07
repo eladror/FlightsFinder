@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first, finalize } from 'rxjs/operators';
 import { SmartFlightsFilterService } from '../Utils/smartFlightsFilter.service';
 import { QualityParam, ParamTypes } from '../interfaces/QualityParam';
+import { searchState } from '../enums/searchState';
 
 @Component({
   selector: 'app-search-flights',
@@ -14,9 +15,10 @@ import { QualityParam, ParamTypes } from '../interfaces/QualityParam';
 })
 
 export class SearchFlightsComponent {
-  showErrorMessage = false;
-  showNoResultMessage = false;
-
+  loadingProgress = 0;
+  loadingMessage = 'Searching for flights...';
+  searchStatesEnum = searchState;
+  currentSearchState: searchState = searchState.empty;
   minAutocompliteLength = 2;
   tripOptions: Trip[];
   whereTo = new FormControl();
@@ -31,34 +33,54 @@ export class SearchFlightsComponent {
   toOptions: any[];
 
   qualityParams: QualityParam[] = [
-    { paramType: ParamTypes.price, paramImportancePrecent: 40},
+    { paramType: ParamTypes.price, paramImportancePrecent: 40 },
     { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
     { paramType: ParamTypes.numberOfStops, paramImportancePrecent: 20 }
   ];
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
     private smartFlightsFilterService: SmartFlightsFilterService) {
+    let fromLoadingRequestNumber = 0;
+    let fromFinishedRequestNumber = 0;
     this.whereFrom.valueChanges
       .pipe(
         startWith(null),
         debounceTime(500),
-        tap(() => { this.isLoadingFromOptions = true; }),
+        tap(() => {
+          fromLoadingRequestNumber++;
+          this.isLoadingFromOptions = true;
+        }),
         distinctUntilChanged(),
         switchMap(val =>
           this.getFlightPlacesFromServer(val || '')
-            .pipe(finalize(() => this.isLoadingFromOptions = false))
+            .pipe(finalize(() => {
+              fromFinishedRequestNumber++;
+              if (fromFinishedRequestNumber === fromFinishedRequestNumber) {
+                this.isLoadingFromOptions = false;
+              }
+            }))
         )
       ).subscribe(result => this.fromOptions = result);
 
+    let toLoadingRequestNumber = 0;
+    let toFinishedRequestNumber = 0;
     this.whereTo.valueChanges
       .pipe(
         startWith(null),
         debounceTime(500),
-        tap(() => this.isLoadingToOptions = true),
+        tap(() => {
+          toLoadingRequestNumber++;
+          this.isLoadingToOptions = true;
+        }),
         distinctUntilChanged(),
         switchMap(val =>
           this.getFlightPlacesFromServer(val || '')
-            .pipe(finalize(() => this.isLoadingToOptions = false))
+            .pipe(finalize(() => {
+              toFinishedRequestNumber++;
+              if (toFinishedRequestNumber === toLoadingRequestNumber) {
+                this.isLoadingToOptions = false;
+              }
+            }))
         )
       ).subscribe(re => { this.toOptions = re; });
   }
@@ -79,8 +101,9 @@ export class SearchFlightsComponent {
   }
 
   onSearch() {
-    this.showErrorMessage = false;
-    this.showNoResultMessage = false;
+    this.setCurrentState(searchState.loading);
+    this.manageLoadingValue();
+
     const whereFrom: string = this.displayFn(this.whereFrom.value);
     const whereTo = this.displayFn(this.whereTo.value);
 
@@ -94,19 +117,46 @@ export class SearchFlightsComponent {
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
         if (tripOptions.length === 0) {
-          this.showNoResultMessage = true;
+          this.setCurrentState(searchState.noResults);
           return;
         }
+
+        this.setCurrentState(searchState.succsses);
 
         this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
           this.formatResults(tripOptions, whereFrom, whereTo), this.qualityParams).filter(result =>
             (result.outbound.flights.length === 1 && result.inbound.flights.length === 1));
       },
         error => {
-          this.showErrorMessage = true;
+          this.setCurrentState(searchState.error);
           this.tripOptions = [];
           console.error(error);
         });
+  }
+
+  manageLoadingValue() {
+    this.loadingProgress = 5;
+
+    const tid = setInterval(() => {
+      if (this.currentSearchState === searchState.loading &&
+        this.loadingProgress < 90) {
+        this.loadingProgress += 5;
+      } else {
+        clearInterval(tid);
+      }
+    }, 500);
+  }
+
+  setCurrentState(state: searchState) {
+    if (this.currentSearchState === searchState.loading) {
+      this.loadingProgress = 100;
+      setTimeout(() => {
+        this.currentSearchState = state;
+        this.loadingProgress = 0;
+      }, 500);
+    } else {
+      this.currentSearchState = state;
+    }
   }
 
   displayFn(option: any) {
