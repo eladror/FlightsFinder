@@ -11,21 +11,21 @@
     </div>
     <div>
         <div class="flight-hours">
-            {{DataDisplayService.getTimeDispaly(flightOption.departure)}}
+            {{dataDisplayService.getTimeDispaly(flightOption.departure)}}
             <mat-icon color="accent">arrow_right_alt</mat-icon>
-            {{DataDisplayService.getTimeDispaly(flightOption.arrive)}}
+            {{dataDisplayService.getTimeDispaly(flightOption.arrive)}}
             <div *ngIf="(flightOption.daysDiff > 0)" class="days-diff">
                 +{{flightOption.daysDiff}}
             </div>
         </div>
     </div>
     <div>
-        <div>{{DataDisplayService.getStopsDisplay(flightOption.flights.length)}}</div>
+        <div>{{dataDisplayService.getStopsDisplay(flightOption.flights.length)}}</div>
     </div>
     <div class="duration-container">
         <mat-icon color="accent">watch_later</mat-icon>
         <div>
-            {{DataDisplayService.getMinutesToHoursDisplay(flightOption.duration)}}
+            {{dataDisplayService.getMinutesToHoursDisplay(flightOption.duration)}}
         </div>
     </div>
 </div>

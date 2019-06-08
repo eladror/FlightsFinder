@@ -14,7 +14,7 @@ export class FlightOptionHeaderComponent {
   outboundTitle = 'Outbound';
   inboundTitle = 'Return';
 
-  constructor(private DataDisplayService: DataDisplayService) {
+  constructor(private dataDisplayService: DataDisplayService) {
   }
 }
 

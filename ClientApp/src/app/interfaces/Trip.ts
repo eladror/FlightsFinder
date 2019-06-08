@@ -3,6 +3,6 @@ interface Trip {
     lowestPriceAgent: Agent;
     inbound: FlightOption;
     outbound: FlightOption;
-    whereFrom: string;
-    whereTo: string;
+    originPlace: Place;
+    destinationPlace: Place;
   }

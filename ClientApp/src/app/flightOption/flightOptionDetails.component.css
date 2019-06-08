@@ -1,0 +1,17 @@
+.connection-display{
+    display: flex;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: 15px;
+}
+
+.connent-title{    
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.clock-icon{
+    font-size: 18px;
+}

@@ -7,4 +7,5 @@ interface Flight {
     duration: number;
     originPlace: Place;
     destinationPlace: Place;
+    connectionTime?: number;
 }

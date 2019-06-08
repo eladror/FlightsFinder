@@ -1,8 +1,8 @@
 <mat-card class="trip">
     <mat-card-header class="trip-title">
-        <div>{{trip.whereFrom}} </div>
+        <div>{{dataDisplayService.getPlaceDisplay(trip.originPlace)}} </div>
         <mat-icon color="accent">arrow_right_alt</mat-icon>
-        <div> {{trip.whereTo}}</div>
+        <div> {{dataDisplayService.getPlaceDisplay(trip.destinationPlace)}}</div>
     </mat-card-header>
     <div class="card-content">
         <div class="accordion-container">
@@ -16,8 +16,7 @@
                 </mat-expansion-panel>
                 <mat-expansion-panel class="flight-option">
                     <mat-expansion-panel-header>
-                        <app-flight-option-header class="flight-option-header" 
-                        [flightOption]="trip.inbound"
+                        <app-flight-option-header class="flight-option-header" [flightOption]="trip.inbound"
                             [isOutbound]="false"></app-flight-option-header>
                     </mat-expansion-panel-header>
                     <app-flight-option-details [flightOption]="trip.inbound"></app-flight-option-details>

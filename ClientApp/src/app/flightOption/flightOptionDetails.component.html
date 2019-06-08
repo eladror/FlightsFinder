@@ -1,3 +1,12 @@
-<div *ngFor="let flight of flightOption.flights">
+<div *ngFor="let flight of flightOption.flights; let i = index">
     <app-flight [flight]="flight"></app-flight>
+    <div class="connection-display" *ngIf="flightOption.flights[i+1]">
+        <mat-icon class="clock-icon" color="accent">watch_later</mat-icon>
+        <div>
+            {{dataDisplayService.getDatesDiffreceInHours(flight.arrive, flightOption.flights[i+1].departure)}}
+        </div>
+        <div class="connent-title">
+            Connect in airport
+        </div>
+    </div>
 </div>

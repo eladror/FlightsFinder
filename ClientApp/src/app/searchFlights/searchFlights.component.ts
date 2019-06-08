@@ -114,9 +114,6 @@ export class SearchFlightsComponent {
     this.setCurrentState(searchState.loading);
     this.manageLoadingValue();
 
-    const whereFrom: string = this.displayFn(this.whereFrom.value);
-    const whereTo = this.displayFn(this.whereTo.value);
-
     const param = new HttpParams()
       .append('outboundDate', this.departureDate.value ? this.departureDate.value.toISOString() : null)
       .append('inboundDate', this.returnDate.value ? this.returnDate.value.toISOString() : null)
@@ -131,9 +128,8 @@ export class SearchFlightsComponent {
           return;
         }
 
-
         this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
-          this.formatResults(tripOptions, whereFrom, whereTo), this.qualityParams).filter(result =>
+          this.formatResults(tripOptions), this.qualityParams).filter(result =>
             (result.outbound.flights.length <= 2 && result.inbound.flights.length === 1));
 
         if (this.tripOptions.length === 0) {
@@ -179,11 +175,8 @@ export class SearchFlightsComponent {
     return option ? option.placeName + ' (' + option.airportId + ')' : option;
   }
 
-  formatResults(results: any[], whereFrom: string, whereTo: string): Trip[] {
+  formatResults(results: any[]): Trip[] {
     results.forEach((trip) => {
-      trip.whereFrom = whereFrom;
-      trip.whereTo = whereTo;
-
       trip.lowestPriceAgent = trip.agents.sort((a, b) => (a.price) - (b.price))[0];
 
       trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);

@@ -10,7 +10,7 @@ import { DataDisplayService } from '../Utils/dataDisplay.service';
 export class FlightOptionDetailsComponent {
   @Input() flightOption: FlightOption;
 
-  constructor() {
+  constructor(private dataDisplayService: DataDisplayService) {
   }
 }
 
