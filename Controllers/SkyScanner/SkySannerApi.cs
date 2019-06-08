@@ -28,6 +28,7 @@ namespace FlightsFinder.Controllers.SkyScanner
             SoylentGreen
         }
         public static readonly DateTime ANY_TIME = DateTime.MinValue;
+        public static readonly DateTime NONE_TIME = DateTime.MinValue;
         private const string englishLocale = "en-US";
         private const string RequestUri = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/";
         private const string dateFormat = "yyyy-MM-dd";
@@ -42,7 +43,7 @@ namespace FlightsFinder.Controllers.SkyScanner
             {
                 throw new DateInPastException(DateType.outbound);
             }
-            if (inboundDate != null)
+            if (inboundDate != NONE_TIME)
             {
                 if (inboundDate < DateTime.Now)
                 {
@@ -137,7 +138,7 @@ namespace FlightsFinder.Controllers.SkyScanner
             var values = new Dictionary<string, string>
             {
                 {"outboundDate", outboundDate.ToString(dateFormat)},
-                {"inboundDate", inboundDate==null?"":inboundDate.ToString(dateFormat)},
+                {"inboundDate", inboundDate==NONE_TIME?"":inboundDate.ToString(dateFormat)},
                 {"cabinClass", flightClass},
                 {"adults", adults.ToString()},
                 {"children", children.ToString()},
@@ -160,14 +161,10 @@ namespace FlightsFinder.Controllers.SkyScanner
             validateResponse(response);
             var responseString = response.Content.ReadAsStringAsync().Result;
             FlightResult res;
-            try
+            res = JsonConvert.DeserializeObject<FlightResult>(responseString);
+            if (res.Status == Status.UpdatesPending)
             {
-                res = JsonConvert.DeserializeObject<FlightResult>(responseString);
-            }
-            catch
-            {
-                responseString = response.Content.ReadAsStringAsync().Result;
-                res = JsonConvert.DeserializeObject<FlightResult>(responseString);
+                return null;
             }
             var legs = toDic(res.Legs, leg => leg.Id);
             var agents = toDic(res.Agents, agent => agent.Id);
@@ -200,7 +197,10 @@ namespace FlightsFinder.Controllers.SkyScanner
                 t.originPlace = originPlace;
                 t.destinationPlace = destinationPlace;
                 t.outbound = createFlightOption(legs[itin.OutboundLegId]);
-                t.inbound = createFlightOption(legs[itin.InboundLegId]);
+                if (itin.InboundLegId != null)
+                {
+                    t.inbound = createFlightOption(legs[itin.InboundLegId]);
+                }
                 t.agents = itin.PricingOptions.Select(po =>
                 {
                     Agent agent = new Agent();

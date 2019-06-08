@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FlightsFinder.Controllers.SkyScanner;
@@ -40,14 +41,27 @@ namespace FlightsFinder.Controllers
         }
         private static bool isGoodTrip(Trip trip)
         {
-            return trip.inbound.flights.Count <= 4 && trip.outbound.flights.Count <= 4;
+            return trip.outbound.flights.Count <= 4 && (trip.inbound == null || trip.inbound.flights.Count <= 4);
+        }
+        private List<Trip> getFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, int people)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                var flights = api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
+                if (flights != null)
+                {
+                    return flights;
+                }
+                Thread.Sleep(1000);
+            }
+            throw new Exception("Can not get results.");
         }
         [HttpPost("[action]")]
         [Route("flights")]
         public ActionResult GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
          string destinationPlace, int people)
         {
-            if (inboundDate == null)
+            if (outboundDate == null)
             {
                 outboundDate = DateTime.Now.AddDays(5);
                 inboundDate = outboundDate.AddDays(5);
@@ -60,25 +74,31 @@ namespace FlightsFinder.Controllers
             {
                 inboundDate = inboundDate.AddDays(1);
             }
+            else if (inboundDate == DateTime.MinValue)
+            {
+                inboundDate = SkyScannerApi.NONE_TIME;
+            }
             Place OriginPlaceObject = JsonConvert.DeserializeObject<Place>(originPlace);
             Place destinationPlaceObject = JsonConvert.DeserializeObject<Place>(destinationPlace);
             if (OriginPlaceObject == null)
             {
                 OriginPlaceObject = defaultOrigin;
             }
-            if (destinationPlaceObject == null)
-            {
-                List<Trip> trips = new List<Trip>();
-                foreach (var dest in defaultDestination)
-                {
-                    trips.AddRange(api.getFlights(outboundDate, inboundDate, OriginPlaceObject, dest, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result.Where(isGoodTrip));
-                }
-                return Json(trips);
-            }
             try
             {
-                return Json(api.getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject,
-                 "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result.Where(isGoodTrip));
+                if (destinationPlaceObject == null)
+                {
+                    List<Trip> trips = new List<Trip>();
+                    foreach (var dest in defaultDestination)
+                    {
+                        trips.AddRange(getFlights(outboundDate, inboundDate, OriginPlaceObject, dest, people).Where(isGoodTrip));
+                    }
+                    return Json(trips);
+                }
+                else
+                {
+                    return Json(getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject, people).Where(isGoodTrip));
+                }
             }
             catch (AggregateException e)
             {
