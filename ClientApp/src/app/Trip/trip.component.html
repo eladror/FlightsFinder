@@ -14,7 +14,7 @@
                     </mat-expansion-panel-header>
                     <app-flight-option-details [flightOption]="trip.outbound"></app-flight-option-details>
                 </mat-expansion-panel>
-                <mat-expansion-panel class="flight-option">
+                <mat-expansion-panel class="flight-option" *ngIf="trip.inbound">
                     <mat-expansion-panel-header>
                         <app-flight-option-header class="flight-option-header" [flightOption]="trip.inbound"
                             [isOutbound]="false"></app-flight-option-header>

@@ -33,6 +33,9 @@ export class SearchFlightsComponent {
   fromOptions: any[];
   toOptions: any[];
 
+  numberOfPassengersOptions = [1, 2, 3, 4, 5, 6, 7, 8];
+  numberOfPassengers = 2;
+
   qualityParams: QualityParam[] = [
     { paramType: ParamTypes.price, paramImportancePrecent: 40 },
     { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
@@ -119,7 +122,7 @@ export class SearchFlightsComponent {
       .append('inboundDate', this.returnDate.value ? this.returnDate.value.toISOString() : null)
       .append('originPlace', JSON.stringify(this.whereFrom.value))
       .append('destinationPlace', JSON.stringify(this.whereTo.value))
-      .append('people', '2');
+      .append('people', this.numberOfPassengers.toString());
 
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
@@ -130,7 +133,8 @@ export class SearchFlightsComponent {
 
         this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
           this.formatResults(tripOptions), this.qualityParams).filter(result =>
-            (result.outbound.flights.length <= 2 && result.inbound.flights.length === 1));
+            (result.outbound.flights.length <= 2 &&
+              (!result.inbound || result.inbound.flights.length === 1)));
 
         if (this.tripOptions.length === 0) {
           this.setCurrentState(searchState.noResults);
@@ -182,22 +186,24 @@ export class SearchFlightsComponent {
       trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);
       trip.outbound.departure = this.setDateValue(trip.outbound.departure);
       trip.outbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.outbound.departure, trip.outbound.arrive);
-      trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
-      trip.inbound.departure = this.setDateValue(trip.inbound.departure);
-      trip.inbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.inbound.departure, trip.inbound.arrive);
-
-
-      trip.inbound.flights.forEach(flight => {
-        flight.arrive = this.setDateValue(flight.arrive);
-        flight.departure = this.setDateValue(flight.departure);
-        flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
-      });
 
       trip.outbound.flights.forEach(flight => {
         flight.arrive = this.setDateValue(flight.arrive);
         flight.departure = this.setDateValue(flight.departure);
         flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
       });
+
+      if (trip.inbound) {
+        trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
+        trip.inbound.departure = this.setDateValue(trip.inbound.departure);
+        trip.inbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.inbound.departure, trip.inbound.arrive);
+
+        trip.inbound.flights.forEach(flight => {
+          flight.arrive = this.setDateValue(flight.arrive);
+          flight.departure = this.setDateValue(flight.departure);
+          flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
+        });
+      }
     });
 
     return results;

@@ -1,12 +1,20 @@
 <div class="main-page">
-  <div class="form-container">
-    <div>
-      <mat-radio-group [(ngModel)]="tripType">
-        <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
-        <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
-      </mat-radio-group>
-    </div>
-    <div>
+  <mat-card class="form-card">
+    <div class="form-container">
+      <div class="form-first-row">
+        <mat-radio-group [(ngModel)]="tripType">
+          <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
+          <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field class="passengers-select">
+          <mat-label>Passengers</mat-label>
+          <mat-select [(ngModel)]="numberOfPassengers" name="passengers">
+            <mat-option *ngFor="let num of numberOfPassengersOptions" [value]="num">
+              {{num}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <form (ngSubmit)="onSearch()" class="search-form">
         <div class="form-fields">
           <mat-form-field class="autocomplete-field">
@@ -26,7 +34,7 @@
           <button type="button" (click)="swapDestinations()" mat-icon-button color="accent">
             <mat-icon>swap_horiz</mat-icon>
           </button>
-          <mat-form-field>
+          <mat-form-field class="autocomplete-field">
             <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
             <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
               <mat-option *ngIf="isLoadingToOptions" class="is-loading">
@@ -60,8 +68,8 @@
         </div>
       </form>
     </div>
-  </div>
-  <div class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
+  </mat-card>
+  <mat-card class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
     <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>
     <app-no-results-message *ngIf="currentSearchState === searchStatesEnum.noResults">
     </app-no-results-message>
@@ -70,5 +78,5 @@
     <div *ngIf="currentSearchState === searchStatesEnum.succsses" class="trips-options">
       <app-flights-results [flightsResults]="tripOptions"></app-flights-results>
     </div>
-  </div>
+  </mat-card>
 </div>

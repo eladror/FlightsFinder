@@ -13,7 +13,8 @@ import {
   MatToolbarModule, MatTabsModule, MatIconModule, MatInputModule,
   MatFormFieldModule, MatAutocompleteModule, MatButtonModule,
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
-  MatGridListModule, MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule
+  MatGridListModule, MatDividerModule, MatExpansionModule,
+  MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -30,12 +31,12 @@ import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule],
 })
 export class AngularMaterialModule { }
 @NgModule({

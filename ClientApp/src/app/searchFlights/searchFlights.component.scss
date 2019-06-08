@@ -3,11 +3,22 @@
     margin: auto;
     margin-top: 50px;
 
+    .form-first-row{
+        display: flex;
+        justify-content: space-between;
+        height: 55px;
+
+        .passengers-select{
+            width: 70px;
+        }
+    }
+
+.form-card{
+    margin-bottom: 20px;
+
     .form-container{
-
-
         .search-form{
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
 
         .date-picker-field{
@@ -29,7 +40,7 @@
         .airport-id{
             font-weight: bold;
         }
-    }
+    }}
 }
 
 .is-loading ::ng-deep .mat-option-text {
@@ -38,8 +49,9 @@
   }
 
   .form-fields{
+    width: 100%;
     display: flex;
-    justify-content: center; 
+    justify-content: space-between; 
   }
   .results-container{
     border: 1px solid #e0e0e0;
