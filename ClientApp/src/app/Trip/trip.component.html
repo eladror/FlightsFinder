@@ -1,8 +1,10 @@
 <mat-card class="trip">
     <mat-card-header class="trip-title">
-        <div>{{dataDisplayService.getPlaceDisplay(trip.originPlace)}} </div>
-        <mat-icon color="accent">arrow_right_alt</mat-icon>
-        <div> {{dataDisplayService.getPlaceDisplay(trip.destinationPlace)}}</div>
+        <div class="country-name">{{trip.originPlace.countryName}}</div>
+        <div class="place-display">{{dataDisplayService.getPlaceDisplay(trip.originPlace)}} </div>
+        <mat-icon color="accent" class="arrow-right-icon">arrow_right_alt</mat-icon>
+        <div class="country-name">{{trip.destinationPlace.countryName}}</div>
+        <div class="place-display"> {{dataDisplayService.getPlaceDisplay(trip.destinationPlace)}}</div>
     </mat-card-header>
     <div class="card-content">
         <div class="accordion-container">

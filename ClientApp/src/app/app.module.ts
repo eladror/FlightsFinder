@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { SatNativeDateModule, SatDatepickerModule } from 'saturn-datepicker';
 
 import { AppComponent } from './app.component';
 import { SearchFlightsComponent } from './searchFlights/searchFlights.component';
@@ -14,7 +15,8 @@ import {
   MatFormFieldModule, MatAutocompleteModule, MatButtonModule,
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
   MatGridListModule, MatDividerModule, MatExpansionModule,
-  MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule
+  MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
+   MatDialogModule, MatCheckboxModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -25,18 +27,23 @@ import { NoResultsMessageComponent } from './noResultsMessage/noResultsMessage.c
 import { SmartFlightsFilterService } from './Utils/smartFlightsFilter.service';
 import { LoadingBarComponent } from './loadingBar/loadingBar.component';
 import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails.component';
+import { DaysOffDialogComponent } from './daysOffDialog/daysOffDialog.component';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
+    MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
+    MatDialogModule, MatCheckboxModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
-    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule],
+    MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
+    MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
+    MatDialogModule, MatCheckboxModule],
 })
 export class AngularMaterialModule { }
 @NgModule({
@@ -51,6 +58,7 @@ export class AngularMaterialModule { }
     NoResultsMessageComponent,
     LoadingBarComponent,
     FlightOptionDetailsComponent,
+    DaysOffDialogComponent,
     HomeComponent
   ],
   imports: [
@@ -58,11 +66,14 @@ export class AngularMaterialModule { }
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
+    SatDatepickerModule,
+    SatNativeDateModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' }
     ]),
     AngularMaterialModule
   ],
+  entryComponents: [DaysOffDialogComponent],
   providers: [DataDisplayService, SmartFlightsFilterService],
   bootstrap: [AppComponent]
 })

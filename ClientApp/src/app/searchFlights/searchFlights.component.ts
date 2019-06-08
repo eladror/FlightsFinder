@@ -1,13 +1,14 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { SafeHtml } from '@angular/platform-browser';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first, finalize } from 'rxjs/operators';
 import { SmartFlightsFilterService } from '../Utils/smartFlightsFilter.service';
 import { QualityParam, ParamTypes } from '../interfaces/QualityParam';
 import { searchState } from '../enums/searchState';
 import { DataDisplayService } from '../Utils/dataDisplay.service';
+import { MatDialog } from '@angular/material';
+import { DaysOffDialogComponent } from '../daysOffDialog/daysOffDialog.component';
 
 @Component({
   selector: 'app-search-flights',
@@ -27,6 +28,11 @@ export class SearchFlightsComponent {
   whereFrom = new FormControl();
   departureDate: FormControl;
   returnDate: FormControl;
+  minDate: Date;
+  maxDate: Date;
+  searchByDates = 'Dates';
+  searchByDaysOff = 'DaysOff';
+  datedToggleValue = this.searchByDates;
 
   isLoadingFromOptions = false;
   isLoadingToOptions = false;
@@ -36,6 +42,19 @@ export class SearchFlightsComponent {
   numberOfPassengersOptions = [1, 2, 3, 4, 5, 6, 7, 8];
   numberOfPassengers = 2;
 
+  numberOfDaysOffOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  numberOfDaysOff = 4;
+
+  daysOff = [
+    { name: 'sunday', isFreeDay: false },
+    { name: 'monday', isFreeDay: false },
+    { name: 'tuesday', isFreeDay: false },
+    { name: 'wednesday', isFreeDay: false },
+    { name: 'thursday', isFreeDay: false },
+    { name: 'friday', isFreeDay: true },
+    { name: 'saturday', isFreeDay: true },
+  ];
+
   qualityParams: QualityParam[] = [
     { paramType: ParamTypes.price, paramImportancePrecent: 40 },
     { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
@@ -44,12 +63,8 @@ export class SearchFlightsComponent {
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
     private smartFlightsFilterService: SmartFlightsFilterService,
-    private dataDisplayService: DataDisplayService) {
-    this.departureDate = new FormControl(new Date());
-    const returnDate = new Date();
-    returnDate.setDate(returnDate.getDate() + 1);
-    this.returnDate = new FormControl(returnDate);
-
+    private dataDisplayService: DataDisplayService, private dialog: MatDialog) {
+    this.initializeDates();
     let fromLoadingRequestNumber = 0;
     let fromFinishedRequestNumber = 0;
     this.whereFrom.valueChanges
@@ -95,6 +110,15 @@ export class SearchFlightsComponent {
       ).subscribe(re => { this.toOptions = re; });
   }
 
+  initializeDates() {
+    this.departureDate = new FormControl(new Date());
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 1);
+    this.returnDate = new FormControl(returnDate);
+    this.minDate = new Date();
+    this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
+  }
+
   getFlightPlacesFromServer(val: string): Observable<any[]> {
     if (val && val.length >= this.minAutocompliteLength) {
       const params = new HttpParams().set('query', val);
@@ -111,6 +135,10 @@ export class SearchFlightsComponent {
     const dest = this.whereFrom.value;
     this.whereFrom.setValue(this.whereTo.value);
     this.whereTo.setValue(dest);
+  }
+
+  onDatedToggleValueChange(val: string) {
+    this.datedToggleValue = val;
   }
 
   onSearch() {
@@ -213,5 +241,18 @@ export class SearchFlightsComponent {
     if (date) {
       return new Date(date);
     }
+  }
+
+  openDaysOffDialog(): void {
+    const dialogRef = this.dialog.open(DaysOffDialogComponent, {
+      width: '350px',
+      data: this.daysOff
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.daysOff = result;
+      console.log('The dialog was closed');
+      console.log(result);
+    });
   }
 }

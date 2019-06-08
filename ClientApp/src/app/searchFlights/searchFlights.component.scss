@@ -7,9 +7,11 @@
         display: flex;
         justify-content: space-between;
         height: 55px;
+        margin-bottom: 20px;
 
         .passengers-select{
             width: 70px;
+            margin-right: 10px;
         }
     }
 
@@ -22,7 +24,7 @@
         }
 
         .date-picker-field{
-            margin-left: 20px;
+            width: 165px;
         }
         
         .search-button-div{
@@ -34,7 +36,7 @@
         }
         
         .autocomplete-field{
-            width: 200px;
+            width:160px;;
         }
         
         .airport-id{
@@ -52,6 +54,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between; 
+    margin-bottom: 20px;
   }
   .results-container{
     border: 1px solid #e0e0e0;
@@ -59,3 +62,43 @@
     padding: 30px;
     transition: 1s linear; 
   }
+
+  .options-container{
+      display: flex;
+  }
+
+  .search-by-container{
+      margin-left: 15px;
+      margin-right: 10px;
+  }
+  .search-by-title{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.search-by-button{
+  font-size: 14px;
+  height: 28px;
+  align-items: center;
+}
+
+.outbound-date{
+    margin-right: 15px;
+}
+
+.dates-container{
+    width: 350px;
+}
+
+.days-off-display{
+    width: 75px;
+}
+
+.mat-button-toggle-checked {
+    background-color: #00b8d44a;
+}
+
+.dates-container > div{
+    display: flex;
+    justify-content: space-between;
+}

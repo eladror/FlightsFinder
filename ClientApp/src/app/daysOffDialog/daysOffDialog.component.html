@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Days Off</h1>
+<div mat-dialog-content>
+    <p>Tell us how many days you want to take off work, and we'll do the rest!</p>
+    <p>These days are not counted as days off:</p>
+    <section *ngFor="let day of daysOff">
+        <mat-checkbox [(ngModel)]="day.isFreeDay">{{day.name}}</mat-checkbox>
+    </section>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">cancle</button>
+    <button mat-button [mat-dialog-close]="daysOff" cdkFocusInitial>Save</button>
+</div>

@@ -1,2 +1,6 @@
 @import "Theme/appTheme.scss";
 @import "app/searchFlights/searchFlights.component.scss";
+@import '~saturn-datepicker/theming';
+@import '~saturn-datepicker/bundle.css';
+
+*{ outline: none !important; } 

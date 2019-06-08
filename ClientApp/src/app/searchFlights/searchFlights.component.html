@@ -6,14 +6,16 @@
           <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
           <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
         </mat-radio-group>
-        <mat-form-field class="passengers-select">
-          <mat-label>Passengers</mat-label>
-          <mat-select [(ngModel)]="numberOfPassengers" name="passengers">
-            <mat-option *ngFor="let num of numberOfPassengersOptions" [value]="num">
-              {{num}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="options-container">
+          <mat-form-field class="passengers-select">
+            <mat-label>Passengers</mat-label>
+            <mat-select [(ngModel)]="numberOfPassengers" name="passengers">
+              <mat-option *ngFor="let num of numberOfPassengersOptions" [value]="num">
+                {{num}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
       <form (ngSubmit)="onSearch()" class="search-form">
         <div class="form-fields">
@@ -48,18 +50,52 @@
               </ng-container>
             </mat-autocomplete>
           </mat-form-field>
-          <mat-form-field class="date-picker-field">
-            <input matInput [matDatepicker]="departurePicker" placeholder="Departure on..."
-              [formControl]="departureDate">
-            <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
-            <mat-datepicker #departurePicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field class="date-picker-field">
-            <input [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker" placeholder="Return on..."
-              [formControl]="returnDate">
-            <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
-            <mat-datepicker #returnPicker></mat-datepicker>
-          </mat-form-field>
+          <div class="search-by-container">
+            <div class="search-by-title">
+              Search By
+            </div>
+            <mat-button-toggle-group class="search-by-button" #group="matButtonToggleGroup" [value]="datedToggleValue"
+              (change)="onDatedToggleValueChange(group.value)">
+              <mat-button-toggle value="Dates">Dates</mat-button-toggle>
+              <mat-button-toggle value="DaysOff">Days-off</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+          <div class="dates-container">
+            <div *ngIf="datedToggleValue === 'Dates'">
+              <mat-form-field class="date-picker-field outbound-date">
+                <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="departurePicker"
+                  placeholder="Departure on..." [formControl]="departureDate">
+                <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
+                <mat-datepicker #departurePicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field class="date-picker-field">
+                <input [min]="departureDate" [max]="maxDate" [disabled]="isOneWay()" matInput
+                  [matDatepicker]="returnPicker" placeholder="Return on..." [formControl]="returnDate">
+                <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
+                <mat-datepicker #returnPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div *ngIf="datedToggleValue === 'DaysOff'">
+              <div>
+                <mat-form-field class="days-off-display">
+                  <mat-label>Days Off</mat-label>
+                  <mat-select [(ngModel)]="numberOfDaysOff" name="daysOff">
+                    <mat-option *ngFor="let num of numberOfDaysOffOptions" [value]="num">
+                      {{num}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button type="button" (click)="openDaysOffDialog()" mat-icon-button color="accent">
+                  <mat-icon>help</mat-icon>
+                </button>
+              </div>
+              <mat-form-field>
+                <input matInput placeholder="Choose a date range" [satDatepicker]="picker" [value]="date">
+                <sat-datepicker #picker [rangeMode]="true"></sat-datepicker>
+                <sat-datepicker-toggle matSuffix [for]="picker"></sat-datepicker-toggle>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
         <div class="search-button-div">
           <button type="submit" mat-raised-button color="accent">Search
