@@ -105,6 +105,11 @@ namespace FlightsFinder.Controllers
                 Response.StatusCode = 500;
                 return Content(e.InnerException.ToString());
             }
+            catch (Exception e)
+            {
+                Response.StatusCode = 500;
+                return Content(e.ToString());
+            }
         }
     }
 }

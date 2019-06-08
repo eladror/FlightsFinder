@@ -131,6 +131,13 @@ namespace FlightsFinder.Controllers.SkyScanner
             }
             return d;
         }
+        private async Task<FlightResult> getFlights(string url)
+        {
+            var response = await client.GetAsync(url);
+            validateResponse(response);
+            var responseString = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<FlightResult>(responseString);
+        }
         public async Task<List<Trip>> getFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, string flightClass, string country, int adults, int children, int infants, Currencies currencies)
         {
             validateDates(outboundDate, inboundDate);
@@ -157,15 +164,11 @@ namespace FlightsFinder.Controllers.SkyScanner
             locations.MoveNext();
             const string getUri = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/uk2/v1.0/";
             var sessionId = locations.Current.Substring(locations.Current.LastIndexOf('/') + 1);
-            response = await client.GetAsync(getUri + sessionId);
-            validateResponse(response);
-            var responseString = response.Content.ReadAsStringAsync().Result;
             FlightResult res;
-            res = JsonConvert.DeserializeObject<FlightResult>(responseString);
-            if (res.Status == Status.UpdatesPending)
+            do
             {
-                return null;
-            }
+                res = await getFlights(getUri + sessionId);
+            } while (res.Status != Status.UpdatesComplete);
             var legs = toDic(res.Legs, leg => leg.Id);
             var agents = toDic(res.Agents, agent => agent.Id);
             var places = toDic(res.ApiFlightPlaces, place => place.Id);
