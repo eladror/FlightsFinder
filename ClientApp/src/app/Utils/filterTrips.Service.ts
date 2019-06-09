@@ -63,7 +63,7 @@ export class FilterTripsService {
         if (dayTimes.morning && (hours >= 5 && hours <= 11)) { return true; }
         if (dayTimes.afternoon && (hours >= 12 && hours <= 16)) { return true; }
         if (dayTimes.evening && (hours >= 17 && hours <= 20)) { return true; }
-        if (dayTimes.night && (hours >= 21 && hours <= 4)) { return true; }
+        if (dayTimes.night && (hours >= 21 || hours <= 4)) { return true; }
 
         return false;
     }

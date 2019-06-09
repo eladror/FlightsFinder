@@ -10,6 +10,7 @@ export class SmartFlightsFilterService {
   constructor(private formatFlightResultsService: FormatServerResultService) { }
 
   public getBestTripsResults(serverResult: any[], qualityParams: QualityParam[]): Trip[] {
+    const maxNumberOfResults = 30;
     const trips = this.formatFlightResultsService.getTripsFromServerResult(serverResult);
 
     const tripScores: TripScores[] = trips.map(trip => {
@@ -20,8 +21,8 @@ export class SmartFlightsFilterService {
     qualityParams.forEach(param => {
       this.setTripsScoresByParam(tripScores, param);
     });
-
-    return tripScores.sort((a, b) => a.totalQualityPoints - b.totalQualityPoints).map(tripScore => tripScore.trip);
+    const sortedTrips = tripScores.sort((a, b) => a.totalQualityPoints - b.totalQualityPoints).map(tripScore => tripScore.trip);
+    return sortedTrips.slice(0, maxNumberOfResults);
   }
   private calcNumOfStops(trip: Trip): number {
     return trip.outbound.flights.length + (trip.inbound === null ? 0 : trip.inbound.flights.length);

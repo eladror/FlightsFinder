@@ -40,6 +40,7 @@ export class SearchFlightsComponent {
   isLoadingToOptions = false;
   fromOptions: any[];
   toOptions: any[];
+  serverResult: any[];
 
   qualityParams: QualityParam[] = [
     { paramType: ParamTypes.price, paramImportancePrecent: 40 },
@@ -72,7 +73,7 @@ export class SearchFlightsComponent {
       inbound: { morning: true, afternoon: true, evening: true, night: true },
       outbound: { morning: true, afternoon: true, evening: true, night: true }
     },
-    numOfStops: { zero: true, one: false, two: false, threeAndMore: false }
+    numOfStops: { zero: true, one: true, two: false, threeAndMore: false }
   };
 
   minPriceSliderValue = 0;
@@ -168,7 +169,8 @@ export class SearchFlightsComponent {
 
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
-        this.allTripOptions = this.smartFlightsFilterService.getBestTripsResults(tripOptions, this.qualityParams);
+        this.serverResult = tripOptions;
+        this.allTripOptions = this.smartFlightsFilterService.getBestTripsResults(this.serverResult, this.qualityParams);
 
         if (this.allTripOptions.length === 0) {
           this.setCurrentState(searchState.noResults);
@@ -180,6 +182,7 @@ export class SearchFlightsComponent {
       },
         error => {
           this.setCurrentState(searchState.error);
+          this.serverResult = [];
           this.allTripOptions = [];
           this.filteredTripOptions = [];
           console.error(error);
@@ -192,6 +195,9 @@ export class SearchFlightsComponent {
 
     this.qualityParams.find(param => param.paramType === ParamTypes.totalTripLength)
       .paramImportancePrecent = (this.maxSliderValue + this.minSliderValue) - value;
+
+    this.allTripOptions = this.smartFlightsFilterService.getBestTripsResults(this.serverResult, this.qualityParams);
+    this.filteredTripOptions = this.filterTripsService.getFilteredTrips(this.allTripOptions, this.filterParams);
   }
 
   isOneWay() {
@@ -267,7 +273,7 @@ export class SearchFlightsComponent {
   }
 
   resetStopsCheckboxs() {
-    this.filterParams.numOfStops = { zero: true, one: false, two: false, threeAndMore: false };
+    this.filterParams.numOfStops = { zero: true, one: true, two: false, threeAndMore: false };
     this.onCheckboxChanged();
   }
 
