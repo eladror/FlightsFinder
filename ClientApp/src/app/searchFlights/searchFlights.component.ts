@@ -9,6 +9,7 @@ import { searchState } from '../enums/searchState';
 import { DataDisplayService } from '../Utils/dataDisplay.service';
 import { MatDialog } from '@angular/material';
 import { DaysOffDialogComponent } from '../daysOffDialog/daysOffDialog.component';
+import { FilterParams, FilterTripsService } from '../Utils/filterTrips.Service';
 
 @Component({
   selector: 'app-search-flights',
@@ -22,7 +23,8 @@ export class SearchFlightsComponent {
   searchStatesEnum = searchState;
   currentSearchState: searchState = searchState.empty;
   minAutocompliteLength = 2;
-  tripOptions: Trip[];
+  allTripOptions: Trip[];
+  filteredTripOptions: Trip[];
   whereTo = new FormControl();
   tripType = 'roundTrip';
   whereFrom = new FormControl();
@@ -38,7 +40,6 @@ export class SearchFlightsComponent {
   isLoadingToOptions = false;
   fromOptions: any[];
   toOptions: any[];
-
 
   qualityParams: QualityParam[] = [
     { paramType: ParamTypes.price, paramImportancePrecent: 40 },
@@ -65,9 +66,23 @@ export class SearchFlightsComponent {
     { name: 'saturday', isFreeDay: true },
   ];
 
+  filterParams: FilterParams = {
+    maxPrice: undefined,
+    flightTime: {
+      inbound: { morning: true, afternoon: true, evening: true, night: true },
+      outbound: { morning: true, afternoon: true, evening: true, night: true }
+    },
+    numOfStops: { zero: true, one: false, two: false, threeAndMore: false }
+  };
+
+  minPriceSliderValue = 0;
+  maxPriceSliderValue = 3000;
+  priceSliderValue: number;
+
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
     private smartFlightsFilterService: SmartFlightsFilterService,
-    private dataDisplayService: DataDisplayService, private dialog: MatDialog) {
+    private dataDisplayService: DataDisplayService, private dialog: MatDialog,
+    private filterTripsService: FilterTripsService) {
     this.initializeDates();
     this.subscribeToWhereFromField();
     this.subscribeToWhereToField();
@@ -153,18 +168,20 @@ export class SearchFlightsComponent {
 
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
-        this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(tripOptions, this.qualityParams);
+        this.allTripOptions = this.smartFlightsFilterService.getBestTripsResults(tripOptions, this.qualityParams);
 
-        if (this.tripOptions.length === 0) {
+        if (this.allTripOptions.length === 0) {
           this.setCurrentState(searchState.noResults);
           return;
         }
 
+        this.filteredTripOptions = this.filterTripsService.getFilteredTrips(this.allTripOptions, this.filterParams);
         this.setCurrentState(searchState.succsses);
       },
         error => {
           this.setCurrentState(searchState.error);
-          this.tripOptions = [];
+          this.allTripOptions = [];
+          this.filteredTripOptions = [];
           console.error(error);
         });
   }
@@ -227,5 +244,40 @@ export class SearchFlightsComponent {
         this.daysOff = result;
       }
     });
+  }
+
+  onPriceSliderInputChange(value: number) {
+    this.priceSliderValue = value;
+    this.filterParams.maxPrice = this.priceSliderValue;
+    this.filteredTripOptions = this.filterTripsService.getFilteredTrips(this.allTripOptions, this.filterParams);
+  }
+
+  onPriceInputLiveChange(event) {
+    this.priceSliderValue = event.value;
+  }
+
+  resetPriceSlider() {
+    this.priceSliderValue = undefined;
+    this.filterParams.maxPrice = this.priceSliderValue;
+    this.filteredTripOptions = this.filterTripsService.getFilteredTrips(this.allTripOptions, this.filterParams);
+  }
+
+  onCheckboxChanged() {
+    this.filteredTripOptions = this.filterTripsService.getFilteredTrips(this.allTripOptions, this.filterParams);
+  }
+
+  resetStopsCheckboxs() {
+    this.filterParams.numOfStops = { zero: true, one: false, two: false, threeAndMore: false };
+    this.onCheckboxChanged();
+  }
+
+  resetOutboundTimesCheckboxs() {
+    this.filterParams.flightTime.outbound = { morning: true, afternoon: true, evening: true, night: true };
+    this.onCheckboxChanged();
+  }
+
+  resetInboundTimesCheckboxs() {
+    this.filterParams.flightTime.inbound = { morning: true, afternoon: true, evening: true, night: true };
+    this.onCheckboxChanged();
   }
 }

@@ -1,5 +1,8 @@
-<div>
-  {{flightsResults.length}} Result found
+<div *ngIf="flightsResults.length > 0">
+  Showing {{flightsResults.length}} results
+</div>
+<div *ngIf="flightsResults.length === 0">
+  No results matching your filters.
 </div>
 <div *ngFor="let trip of flightsResults">
   <app-trip [trip]="trip"></app-trip>

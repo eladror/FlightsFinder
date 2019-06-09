@@ -6,23 +6,23 @@
           <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
           <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
         </mat-radio-group>
-        <div class="options-container">
-          <mat-form-field class="passengers-select">
-            <mat-label>Passengers</mat-label>
-            <mat-select [(ngModel)]="numberOfPassengers" name="passengers">
-              <mat-option *ngFor="let num of numberOfPassengersOptions" [value]="num">
-                {{num}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="search-by-container">
+          <div class="search-by-title">
+            Search By
+          </div>
+          <mat-button-toggle-group class="search-by-button" #group="matButtonToggleGroup" [value]="datedToggleValue"
+            (change)="onDatedToggleValueChange(group.value)">
+            <mat-button-toggle value="Dates">Dates</mat-button-toggle>
+            <mat-button-toggle value="DaysOff">Days-off</mat-button-toggle>
+          </mat-button-toggle-group>
         </div>
       </div>
       <form (ngSubmit)="onSearch()" class="search-form">
         <div class="form-fields">
           <mat-form-field class="autocomplete-field">
             <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
-            <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption [displayWith]="dataDisplayService.getPlaceDisplay"
-              [panelWidth]="250">
+            <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption
+              [displayWith]="dataDisplayService.getPlaceDisplay" [panelWidth]="250">
               <mat-option *ngIf="isLoadingFromOptions" class="is-loading" class="autocomplete-option">
                 <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
@@ -39,8 +39,8 @@
           </button>
           <mat-form-field class="autocomplete-field">
             <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
-            <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="dataDisplayService.getPlaceDisplay"
-            [panelWidth]="250">
+            <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption
+              [displayWith]="dataDisplayService.getPlaceDisplay" [panelWidth]="250">
               <mat-option *ngIf="isLoadingToOptions" class="is-loading" class="autocomplete-option">
                 <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
@@ -52,16 +52,6 @@
               </ng-container>
             </mat-autocomplete>
           </mat-form-field>
-          <div class="search-by-container">
-            <div class="search-by-title">
-              Search By
-            </div>
-            <mat-button-toggle-group class="search-by-button" #group="matButtonToggleGroup" [value]="datedToggleValue"
-              (change)="onDatedToggleValueChange(group.value)">
-              <mat-button-toggle value="Dates">Dates</mat-button-toggle>
-              <mat-button-toggle value="DaysOff">Days-off</mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
           <div class="dates-container">
             <div *ngIf="datedToggleValue === 'Dates'">
               <mat-form-field class="date-picker-field outbound-date">
@@ -98,6 +88,16 @@
               </mat-form-field>
             </div>
           </div>
+          <div class="options-container">
+            <mat-form-field class="passengers-select">
+              <mat-label>Passengers</mat-label>
+              <mat-select [(ngModel)]="numberOfPassengers" name="passengers">
+                <mat-option *ngFor="let num of numberOfPassengersOptions" [value]="num">
+                  {{num}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
         <div class="search-button-div">
           <button type="submit" mat-raised-button color="accent">Search
@@ -114,17 +114,95 @@
     </mat-slider>
     <span>Price</span>
   </div>
-  <mat-card class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
-    <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>
-    <app-no-results-message *ngIf="currentSearchState === searchStatesEnum.noResults">
-    </app-no-results-message>
-    <app-loading-bar *ngIf="currentSearchState === searchStatesEnum.loading" [message]="loadingMessage"
-      [value]="loadingProgress"></app-loading-bar>
-    <div *ngIf="currentSearchState === searchStatesEnum.succsses" class="trips-options">
-      <app-flights-results [flightsResults]="tripOptions"></app-flights-results>
+  <div class="results-content">
+    <div class="filters-display" *ngIf="currentSearchState === searchStatesEnum.succsses">
+      <mat-expansion-panel class="filter-expander">
+        <mat-expansion-panel-header>
+          Price
+        </mat-expansion-panel-header>
+        <div>Max Price
+          <span *ngIf="priceSliderValue">: {{priceSliderValue}}$</span>
+        </div>
+        <mat-slider class="price-slider-display" [max]="maxPriceSliderValue" [min]="minPriceSliderValue"
+          [(ngModel)]="priceSliderValue" #priceSlider (slideend)="onPriceSliderInputChange(priceSlider.value)"
+          (pointerup)="onPriceSliderInputChange(priceSlider.value)" (input)="onPriceInputLiveChange($event)">
+        </mat-slider>
+        <button *ngIf="priceSliderValue" mat-stroked-button color="primary" (click)="resetPriceSlider()">reset</button>
+      </mat-expansion-panel>
+      <mat-expansion-panel class="filter-expander">
+        <mat-expansion-panel-header>
+          Stops
+        </mat-expansion-panel-header>
+        <div class="checkbox-container">
+          <mat-checkbox [(ngModel)]="this.filterParams.numOfStops.zero" (change)="onCheckboxChanged()">Non-Stop
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.numOfStops.one" (change)="onCheckboxChanged()">1 Stop
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.numOfStops.two" (change)="onCheckboxChanged()">2 Stops
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.numOfStops.threeAndMore" (change)="onCheckboxChanged()">3+
+            Stops
+          </mat-checkbox>
+          <div>
+            <button mat-stroked-button color="primary" (click)="resetStopsCheckboxs()">reset</button>
+          </div>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel class="filter-expander">
+        <mat-expansion-panel-header>
+          Outbound Flight
+        </mat-expansion-panel-header>
+        <div class="checkbox-container">
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.outbound.morning" (change)="onCheckboxChanged()">
+            morning <span class="checkbox-hours">(5am - 12pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.outbound.afternoon" (change)="onCheckboxChanged()">
+            afternoon <span class="checkbox-hours">(12pm - 17pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.outbound.evening" (change)="onCheckboxChanged()">
+            evening <span class="checkbox-hours">(17pm - 21pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.outbound.night" (change)="onCheckboxChanged()">night
+              <span class="checkbox-hours">(21pm - 5am)</span>
+          </mat-checkbox>
+          <div>
+            <button mat-stroked-button color="primary" (click)="resetOutboundTimesCheckboxs()">reset</button>
+          </div>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel class="filter-expander">
+        <mat-expansion-panel-header>
+          Inbound Flight
+        </mat-expansion-panel-header>
+        <div class="checkbox-container">
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.inbound.morning" (change)="onCheckboxChanged()">
+            morning <span class="checkbox-hours">(5am - 12pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.inbound.afternoon" (change)="onCheckboxChanged()">
+            afternoon <span class="checkbox-hours">(12pm - 17pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.inbound.evening" (change)="onCheckboxChanged()">
+            evening <span class="checkbox-hours">(17pm - 21pm)</span>
+          </mat-checkbox>
+          <mat-checkbox [(ngModel)]="this.filterParams.flightTime.inbound.night" (change)="onCheckboxChanged()">night
+            <span class="checkbox-hours">(21pm - 5am)</span>
+          </mat-checkbox>
+          <div>
+            <button mat-stroked-button color="primary" (click)="resetInboundTimesCheckboxs()">reset</button>
+          </div>
+        </div>
+      </mat-expansion-panel>
     </div>
-  </mat-card>
-</div>
-<div class="filters-display">
-  filter
+    <div class="space-div" *ngIf="currentSearchState != searchStatesEnum.succsses"></div>
+    <mat-card class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
+      <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>
+      <app-no-results-message *ngIf="currentSearchState === searchStatesEnum.noResults">
+      </app-no-results-message>
+      <app-loading-bar *ngIf="currentSearchState === searchStatesEnum.loading" [message]="loadingMessage"
+        [value]="loadingProgress"></app-loading-bar>
+      <div *ngIf="currentSearchState === searchStatesEnum.succsses" class="trips-options">
+        <app-flights-results [flightsResults]="filteredTripOptions"></app-flights-results>
+      </div>
+    </mat-card>
+  </div>
 </div>
