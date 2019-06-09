@@ -11,7 +11,7 @@ export class SmartFlightsFilterService {
 
   public getBestTripsResults(serverResult: any[], qualityParams: QualityParam[]): Trip[] {
     const trips = this.formatFlightResultsService.getTripsFromServerResult(serverResult).filter(result =>
-      (result.outbound.flights.length <= 2 &&
+      (result.outbound.flights.length <= 1 &&
         (!result.inbound || result.inbound.flights.length === 1)));
 
     const tripScores: TripScores[] = [];

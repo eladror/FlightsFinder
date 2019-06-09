@@ -16,7 +16,7 @@ import {
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
   MatGridListModule, MatDividerModule, MatExpansionModule,
   MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-  MatDialogModule, MatCheckboxModule
+  MatDialogModule, MatCheckboxModule, MatSliderModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -29,6 +29,7 @@ import { LoadingBarComponent } from './loadingBar/loadingBar.component';
 import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails.component';
 import { DaysOffDialogComponent } from './daysOffDialog/daysOffDialog.component';
 import { FormatServerResultService } from './Utils/formatServerResult.service';
+import { FilterTripsService } from './Utils/filterTrips.Service';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
@@ -37,14 +38,14 @@ import { FormatServerResultService } from './Utils/formatServerResult.service';
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
     MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
     MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-    MatDialogModule, MatCheckboxModule],
+    MatDialogModule, MatCheckboxModule, MatSliderModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
     MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
     MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-    MatDialogModule, MatCheckboxModule],
+    MatDialogModule, MatCheckboxModule, MatSliderModule],
 })
 export class AngularMaterialModule { }
 @NgModule({
@@ -75,7 +76,7 @@ export class AngularMaterialModule { }
     AngularMaterialModule
   ],
   entryComponents: [DaysOffDialogComponent],
-  providers: [DataDisplayService, SmartFlightsFilterService, FormatServerResultService],
+  providers: [DataDisplayService, SmartFlightsFilterService, FormatServerResultService, FilterTripsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -39,6 +39,16 @@ export class SearchFlightsComponent {
   fromOptions: any[];
   toOptions: any[];
 
+
+  qualityParams: QualityParam[] = [
+    { paramType: ParamTypes.price, paramImportancePrecent: 40 },
+    { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
+    { paramType: ParamTypes.numberOfStops, paramImportancePrecent: 20 }
+  ];
+  minSliderValue = 10;
+  maxSliderValue = 70;
+  sliderValue = (this.maxSliderValue + this.minSliderValue) / 2;
+
   numberOfPassengersOptions = [1, 2, 3, 4, 5, 6, 7, 8];
   numberOfPassengers = 2;
 
@@ -53,12 +63,6 @@ export class SearchFlightsComponent {
     { name: 'thursday', isFreeDay: false },
     { name: 'friday', isFreeDay: true },
     { name: 'saturday', isFreeDay: true },
-  ];
-
-  qualityParams: QualityParam[] = [
-    { paramType: ParamTypes.price, paramImportancePrecent: 40 },
-    { paramType: ParamTypes.totalTripLength, paramImportancePrecent: 40 },
-    { paramType: ParamTypes.numberOfStops, paramImportancePrecent: 20 }
   ];
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
@@ -165,6 +169,14 @@ export class SearchFlightsComponent {
         });
   }
 
+  onSliderInputChange(value: number) {
+    this.qualityParams.find(param => param.paramType === ParamTypes.price)
+      .paramImportancePrecent = value;
+
+    this.qualityParams.find(param => param.paramType === ParamTypes.totalTripLength)
+      .paramImportancePrecent = (this.maxSliderValue + this.minSliderValue) - value;
+  }
+
   isOneWay() {
     return this.tripType === 'oneWay';
   }
@@ -180,12 +192,12 @@ export class SearchFlightsComponent {
   }
 
   manageLoadingValue() {
-    this.loadingProgress = 5;
+    this.loadingProgress = 2;
 
     const tid = setInterval(() => {
       if (this.currentSearchState === searchState.loading &&
         this.loadingProgress < 90) {
-        this.loadingProgress += 5;
+        this.loadingProgress += 2;
       } else {
         clearInterval(tid);
       }
@@ -204,10 +216,6 @@ export class SearchFlightsComponent {
     }
   }
 
-  displayFn(option: any) {
-    return option ? option.placeName + ' (' + option.airportId + ')' : option;
-  }
-
   openDaysOffDialog(): void {
     const dialogRef = this.dialog.open(DaysOffDialogComponent, {
       width: '350px',
@@ -215,9 +223,9 @@ export class SearchFlightsComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.daysOff = result;
-      console.log('The dialog was closed');
-      console.log(result);
+      if (result) {
+        this.daysOff = result;
+      }
     });
   }
 }

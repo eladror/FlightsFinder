@@ -107,3 +107,42 @@
     position: absolute;
     top: 400px;
 }
+
+.mat-slider-track-fill {
+    background-color: #b0b0b0 !important;
+}
+
+.slider-display{
+    width: 300px;
+}
+
+.mat-slider-thumb{
+    box-shadow: 0 0 15px #ad1457;
+    background-color: #ad1457 !important;
+    border-color: #ad1457 !important;
+}
+
+.slider-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ad1457;
+    font-weight: bold;
+}
+
+.autocomplete-place-name{
+    line-height: normal;
+    white-space: normal;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.autocomplete-country-name{
+    line-height: normal;
+    font-size: 14px;
+    color: gray;
+}
+
+.autocomplete-option{
+    height: 55px;
+}

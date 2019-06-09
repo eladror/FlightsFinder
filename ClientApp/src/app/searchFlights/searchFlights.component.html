@@ -21,14 +21,15 @@
         <div class="form-fields">
           <mat-form-field class="autocomplete-field">
             <input matInput [matAutocomplete]="autoFrom" placeholder="From..." [formControl]="whereFrom">
-            <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
-              <mat-option *ngIf="isLoadingFromOptions" class="is-loading">
+            <mat-autocomplete #autoFrom="matAutocomplete" autoActiveFirstOption [displayWith]="dataDisplayService.getPlaceDisplay"
+              [panelWidth]="250">
+              <mat-option *ngIf="isLoadingFromOptions" class="is-loading" class="autocomplete-option">
                 <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
-              <ng-container *ngIf="!isLoadingFromOptions">
-                <mat-option *ngFor="let option of fromOptions" [value]="option">
-                  <span class="place-name">{{ displayFn(option) }}</span> -
-                  <span class="country-name">{{ option.countryName }}</span>
+              <ng-container>
+                <mat-option *ngFor="let option of fromOptions" [value]="option" class="autocomplete-option">
+                  <div class="autocomplete-place-name">{{ dataDisplayService.getPlaceDisplay(option) }}</div>
+                  <div class="autocomplete-country-name">{{ option.countryName }}</div>
                 </mat-option>
               </ng-container>
             </mat-autocomplete>
@@ -38,14 +39,15 @@
           </button>
           <mat-form-field class="autocomplete-field">
             <input matInput [matAutocomplete]="autoTo" placeholder="To..." [formControl]="whereTo">
-            <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
-              <mat-option *ngIf="isLoadingToOptions" class="is-loading">
+            <mat-autocomplete #autoTo="matAutocomplete" autoActiveFirstOption [displayWith]="dataDisplayService.getPlaceDisplay"
+            [panelWidth]="250">
+              <mat-option *ngIf="isLoadingToOptions" class="is-loading" class="autocomplete-option">
                 <mat-spinner diameter="20"></mat-spinner>
               </mat-option>
-              <ng-container *ngIf="!isLoadingToOptions">
-                <mat-option *ngFor="let option of toOptions" [value]="option">
-                  <span class="place-name">{{ displayFn(option) }}</span> -
-                  <span class="country-name">{{ option.countryName }}</span>
+              <ng-container>
+                <mat-option *ngFor="let option of toOptions" [value]="option" class="autocomplete-option">
+                  <div class="autocomplete-place-name">{{ dataDisplayService.getPlaceDisplay(option) }}</div>
+                  <div class="autocomplete-country-name">{{ option.countryName }}</div>
                 </mat-option>
               </ng-container>
             </mat-autocomplete>
@@ -105,6 +107,13 @@
       </form>
     </div>
   </mat-card>
+  <div *ngIf="currentSearchState === searchStatesEnum.succsses" class="slider-container">
+    <span>Speed</span>
+    <mat-slider class="slider-display" [max]="maxSliderValue" [min]="minSliderValue" [(ngModel)]="sliderValue" #mySlider
+      (slideend)="onSliderInputChange(mySlider.value)" (pointerup)="onSliderInputChange(mySlider.value)">
+    </mat-slider>
+    <span>Price</span>
+  </div>
   <mat-card class="results-container" *ngIf="currentSearchState !== searchStatesEnum.empty">
     <app-error-message *ngIf="currentSearchState === searchStatesEnum.error"></app-error-message>
     <app-no-results-message *ngIf="currentSearchState === searchStatesEnum.noResults">
