@@ -45,21 +45,13 @@ namespace FlightsFinder.Controllers
         }
         private List<Trip> getFlights(DateTime outboundDate, DateTime inboundDate, Place originPlace, Place destinationPlace, int people)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                var flights = api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
-                if (flights != null)
-                {
-                    return flights;
-                }
-                Thread.Sleep(1000);
-            }
-            throw new Exception("Can not get results.");
+            var flights = api.getFlights(outboundDate, inboundDate, originPlace, destinationPlace, "Economy", DEFAULT_COUNTRY, people, 0, 0, SkyScannerApi.Currencies.Dollar).Result;
+            return flights;
         }
         [HttpPost("[action]")]
         [Route("flights")]
         public ActionResult GetFlights(DateTime outboundDate, DateTime inboundDate, string originPlace,
-         string destinationPlace, int people)
+         string destinationPlace, int people,bool oneWay)
         {
             if (outboundDate == null)
             {
@@ -76,7 +68,11 @@ namespace FlightsFinder.Controllers
             }
             else if (inboundDate == DateTime.MinValue)
             {
-                inboundDate = SkyScannerApi.NONE_TIME;
+                inboundDate = outboundDate.AddDays(1);
+            }
+            if (oneWay)
+            {
+                inboundDate=SkyScannerApi.NONE_TIME;
             }
             Place OriginPlaceObject = JsonConvert.DeserializeObject<Place>(originPlace);
             Place destinationPlaceObject = JsonConvert.DeserializeObject<Place>(destinationPlace);
@@ -84,31 +80,42 @@ namespace FlightsFinder.Controllers
             {
                 OriginPlaceObject = defaultOrigin;
             }
-            try
+            bool retry=true;
+            while (true)
             {
-                if (destinationPlaceObject == null)
+                try
                 {
-                    List<Trip> trips = new List<Trip>();
-                    foreach (var dest in defaultDestination)
+                    if (destinationPlaceObject == null)
                     {
-                        trips.AddRange(getFlights(outboundDate, inboundDate, OriginPlaceObject, dest, people).Where(isGoodTrip));
+                        List<Trip> trips = new List<Trip>();
+                        foreach (var dest in defaultDestination)
+                        {
+                            trips.AddRange(getFlights(outboundDate, inboundDate, OriginPlaceObject, dest, people).Where(isGoodTrip));
+                        }
+                        return Json(trips);
                     }
-                    return Json(trips);
+                    else
+                    {
+                        return Json(getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject, people).Where(isGoodTrip));
+                    }
                 }
-                else
+                catch (AggregateException e)
                 {
-                    return Json(getFlights(outboundDate, inboundDate, OriginPlaceObject, destinationPlaceObject, people).Where(isGoodTrip));
+                    if(!retry)
+                    {
+                        Response.StatusCode = 500;
+                        return Content(e.InnerException.ToString());
+                    }
                 }
-            }
-            catch (AggregateException e)
-            {
-                Response.StatusCode = 500;
-                return Content(e.InnerException.ToString());
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = 500;
-                return Content(e.ToString());
+                catch (Exception e)
+                {
+                    if (!retry)
+                    {
+                        Response.StatusCode = 500;
+                        return Content(e.ToString());
+                    }
+                }
+                retry = false;
             }
         }
     }
