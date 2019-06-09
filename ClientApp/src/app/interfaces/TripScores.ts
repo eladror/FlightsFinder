@@ -1,7 +1,7 @@
 interface TripScores {
     trip: Trip;
     priceScore: number;
-    tripLenghtScore: number;
+    tripLengthScore: number;
     numberOfStopsScore: number;
     totalQualityPoints: number;
 }
