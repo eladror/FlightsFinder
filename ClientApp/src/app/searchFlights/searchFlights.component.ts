@@ -65,8 +65,23 @@ export class SearchFlightsComponent {
     private smartFlightsFilterService: SmartFlightsFilterService,
     private dataDisplayService: DataDisplayService, private dialog: MatDialog) {
     this.initializeDates();
+    this.subscribeToWhereFromField();
+    this.subscribeToWhereToField();
+  }
+
+  initializeDates() {
+    this.departureDate = new FormControl(new Date());
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 1);
+    this.returnDate = new FormControl(returnDate);
+    this.minDate = new Date();
+    this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
+  }
+
+  subscribeToWhereFromField() {
     let fromLoadingRequestNumber = 0;
     let fromFinishedRequestNumber = 0;
+
     this.whereFrom.valueChanges
       .pipe(
         startWith(null),
@@ -87,6 +102,9 @@ export class SearchFlightsComponent {
         )
       ).subscribe(result => this.fromOptions = result);
 
+  }
+
+  subscribeToWhereToField() {
     let toLoadingRequestNumber = 0;
     let toFinishedRequestNumber = 0;
     this.whereTo.valueChanges
@@ -110,35 +128,12 @@ export class SearchFlightsComponent {
       ).subscribe(re => { this.toOptions = re; });
   }
 
-  initializeDates() {
-    this.departureDate = new FormControl(new Date());
-    const returnDate = new Date();
-    returnDate.setDate(returnDate.getDate() + 1);
-    this.returnDate = new FormControl(returnDate);
-    this.minDate = new Date();
-    this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
-  }
-
   getFlightPlacesFromServer(val: string): Observable<any[]> {
     if (val && val.length >= this.minAutocompliteLength) {
       const params = new HttpParams().set('query', val);
       return this.http.get<any[]>(this.baseUrl + 'api/SkyScanner/GetPlaces', { params: params });
     }
     return of([]);
-  }
-
-  isOneWay() {
-    return this.tripType === 'oneWay';
-  }
-
-  swapDestinations() {
-    const dest = this.whereFrom.value;
-    this.whereFrom.setValue(this.whereTo.value);
-    this.whereTo.setValue(dest);
-  }
-
-  onDatedToggleValueChange(val: string) {
-    this.datedToggleValue = val;
   }
 
   onSearch() {
@@ -154,15 +149,7 @@ export class SearchFlightsComponent {
 
     this.http.post<any[]>(this.baseUrl + 'api/SkyScanner/flights', param)
       .subscribe((tripOptions: any[]) => {
-        if (tripOptions.length === 0) {
-          this.setCurrentState(searchState.noResults);
-          return;
-        }
-
-        this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(
-          this.formatResults(tripOptions), this.qualityParams).filter(result =>
-            (result.outbound.flights.length <= 2 &&
-              (!result.inbound || result.inbound.flights.length === 1)));
+        this.tripOptions = this.smartFlightsFilterService.getBestTripsResults(tripOptions, this.qualityParams);
 
         if (this.tripOptions.length === 0) {
           this.setCurrentState(searchState.noResults);
@@ -176,6 +163,20 @@ export class SearchFlightsComponent {
           this.tripOptions = [];
           console.error(error);
         });
+  }
+
+  isOneWay() {
+    return this.tripType === 'oneWay';
+  }
+
+  swapDestinations() {
+    const dest = this.whereFrom.value;
+    this.whereFrom.setValue(this.whereTo.value);
+    this.whereTo.setValue(dest);
+  }
+
+  onDatedToggleValueChange(val: string) {
+    this.datedToggleValue = val;
   }
 
   manageLoadingValue() {
@@ -205,42 +206,6 @@ export class SearchFlightsComponent {
 
   displayFn(option: any) {
     return option ? option.placeName + ' (' + option.airportId + ')' : option;
-  }
-
-  formatResults(results: any[]): Trip[] {
-    results.forEach((trip) => {
-      trip.lowestPriceAgent = trip.agents.sort((a, b) => (a.price) - (b.price))[0];
-
-      trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);
-      trip.outbound.departure = this.setDateValue(trip.outbound.departure);
-      trip.outbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.outbound.departure, trip.outbound.arrive);
-
-      trip.outbound.flights.forEach(flight => {
-        flight.arrive = this.setDateValue(flight.arrive);
-        flight.departure = this.setDateValue(flight.departure);
-        flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
-      });
-
-      if (trip.inbound) {
-        trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
-        trip.inbound.departure = this.setDateValue(trip.inbound.departure);
-        trip.inbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.inbound.departure, trip.inbound.arrive);
-
-        trip.inbound.flights.forEach(flight => {
-          flight.arrive = this.setDateValue(flight.arrive);
-          flight.departure = this.setDateValue(flight.departure);
-          flight.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(flight.departure, flight.arrive);
-        });
-      }
-    });
-
-    return results;
-  }
-
-  setDateValue(date: string): Date {
-    if (date) {
-      return new Date(date);
-    }
   }
 
   openDaysOffDialog(): void {

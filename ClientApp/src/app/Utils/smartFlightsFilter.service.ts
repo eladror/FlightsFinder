@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
 import { QualityParam } from '../interfaces/QualityParam';
+import { FormatServerResultService } from './formatServerResult.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SmartFlightsFilterService {
 
-  public getBestTripsResults(trips: Trip[], qualityParams: QualityParam[]): Trip[] {
+  constructor(private formatFlightResultsService: FormatServerResultService) { }
+
+  public getBestTripsResults(serverResult: any[], qualityParams: QualityParam[]): Trip[] {
+    const trips = this.formatFlightResultsService.getTripsFromServerResult(serverResult).filter(result =>
+      (result.outbound.flights.length <= 2 &&
+        (!result.inbound || result.inbound.flights.length === 1)));
+
     const tripScores: TripScores[] = [];
 
     qualityParams.forEach(param => {
@@ -22,5 +29,6 @@ export class SmartFlightsFilterService {
   }
 
   private setTripsTotalScore(tripScores: TripScores[]): void {
+
   }
 }

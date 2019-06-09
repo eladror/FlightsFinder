@@ -16,7 +16,7 @@ import {
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
   MatGridListModule, MatDividerModule, MatExpansionModule,
   MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-   MatDialogModule, MatCheckboxModule
+  MatDialogModule, MatCheckboxModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -28,6 +28,7 @@ import { SmartFlightsFilterService } from './Utils/smartFlightsFilter.service';
 import { LoadingBarComponent } from './loadingBar/loadingBar.component';
 import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails.component';
 import { DaysOffDialogComponent } from './daysOffDialog/daysOffDialog.component';
+import { FormatServerResultService } from './Utils/formatServerResult.service';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
@@ -74,7 +75,7 @@ export class AngularMaterialModule { }
     AngularMaterialModule
   ],
   entryComponents: [DaysOffDialogComponent],
-  providers: [DataDisplayService, SmartFlightsFilterService],
+  providers: [DataDisplayService, SmartFlightsFilterService, FormatServerResultService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

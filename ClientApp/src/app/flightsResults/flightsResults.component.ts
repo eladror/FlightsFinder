@@ -17,7 +17,5 @@ export class FlightsResultsComponent {
   expandedElement: Trip | null;
 
   constructor() {
-    // this.flightsResults.map(result => {
-    // });
   }
 }
