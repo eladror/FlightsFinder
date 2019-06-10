@@ -39,3 +39,9 @@
 .arrow-right-icon{
     margin: 0 7px;
 }
+
+.trips-dates-display{
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 10px;
+}

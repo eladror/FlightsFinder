@@ -30,6 +30,7 @@ import { FlightOptionDetailsComponent } from './flightOption/flightOptionDetails
 import { DaysOffDialogComponent } from './daysOffDialog/daysOffDialog.component';
 import { FormatServerResultService } from './Utils/formatServerResult.service';
 import { FilterTripsService } from './Utils/filterTrips.Service';
+import { DaysOffUtilsService } from './Utils/daysOffUtils.service';
 
 @NgModule({
   imports: [MatToolbarModule, MatTabsModule, MatIconModule,
@@ -76,7 +77,8 @@ export class AngularMaterialModule { }
     AngularMaterialModule
   ],
   entryComponents: [DaysOffDialogComponent],
-  providers: [DataDisplayService, SmartFlightsFilterService, FormatServerResultService, FilterTripsService],
+  providers: [DataDisplayService, SmartFlightsFilterService,
+    FormatServerResultService, FilterTripsService, DaysOffUtilsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

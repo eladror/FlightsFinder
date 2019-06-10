@@ -27,9 +27,13 @@ export class FilterTripsService {
 
         const filteredTrips = trips.filter(trip => {
             const outbondStopsNum = trip.outbound.flights.length - 1;
-            const inboundStopsNum = trip.inbound.flights.length - 1;
+            let inboundStopsNum;
+            if (trip.inbound) {
+                inboundStopsNum = trip.inbound.flights.length - 1;
+            }
 
-            return (stopsNums.includes(outbondStopsNum) && stopsNums.includes(inboundStopsNum));
+            return (stopsNums.includes(outbondStopsNum) &&
+                (!inboundStopsNum || stopsNums.includes(inboundStopsNum)));
         });
 
         return filteredTrips;
@@ -40,8 +44,11 @@ export class FilterTripsService {
             return this.isInWantedHoursRange(trip.outbound.departure, filterParams.flightTime.outbound);
         });
 
-        filteredTrips  = filteredTrips.filter(trip => {
-            return this.isInWantedHoursRange(trip.inbound.departure, filterParams.flightTime.inbound);
+
+        filteredTrips = filteredTrips.filter(trip => {
+            return trip.inbound ?
+                this.isInWantedHoursRange(trip.inbound.departure, filterParams.flightTime.inbound)
+                : true;
         });
 
         return filteredTrips;

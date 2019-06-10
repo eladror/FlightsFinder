@@ -5,6 +5,9 @@
         <mat-icon color="accent" class="arrow-right-icon">arrow_right_alt</mat-icon>
         <div class="country-name">{{trip.destinationPlace.countryName}}</div>
         <div class="place-display"> {{dataDisplayService.getPlaceDisplay(trip.destinationPlace)}}</div>
+        <div class="trips-dates-display">
+            {{dataDisplayService.getDateRangeDispaly(trip.outboundDate, trip.inboundDate)}}
+        </div>
     </mat-card-header>
     <div class="card-content">
         <div class="accordion-container">

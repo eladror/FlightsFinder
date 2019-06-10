@@ -4,16 +4,17 @@
       <div class="form-first-row">
         <mat-radio-group [(ngModel)]="tripType">
           <mat-radio-button class="radio-button-field" value="roundTrip">Round Trip</mat-radio-button>
-          <mat-radio-button class="radio-button-field" value="oneWay">One Way</mat-radio-button>
+          <mat-radio-button class="radio-button-field" value="oneWay" [disabled]="datesToggleValue === 'DaysOff'">One
+            Way</mat-radio-button>
         </mat-radio-group>
         <div class="search-by-container">
           <div class="search-by-title">
             Search By
           </div>
-          <mat-button-toggle-group class="search-by-button" #group="matButtonToggleGroup" [value]="datedToggleValue"
-            (change)="onDatedToggleValueChange(group.value)">
+          <mat-button-toggle-group class="search-by-button" #group="matButtonToggleGroup" [value]="datesToggleValue"
+            (change)="onDatesToggleValueChange(group.value)">
             <mat-button-toggle value="Dates">Dates</mat-button-toggle>
-            <mat-button-toggle value="DaysOff">Days-off</mat-button-toggle>
+            <mat-button-toggle value="DaysOff" [disabled]="tripType === 'oneWay'">Days-off</mat-button-toggle>
           </mat-button-toggle-group>
         </div>
       </div>
@@ -53,7 +54,7 @@
             </mat-autocomplete>
           </mat-form-field>
           <div class="dates-container">
-            <div *ngIf="datedToggleValue === 'Dates'">
+            <div *ngIf="datesToggleValue === 'Dates'">
               <mat-form-field class="date-picker-field outbound-date">
                 <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="departurePicker"
                   placeholder="Departure on..." [formControl]="departureDate">
@@ -67,7 +68,7 @@
                 <mat-datepicker #returnPicker></mat-datepicker>
               </mat-form-field>
             </div>
-            <div *ngIf="datedToggleValue === 'DaysOff'">
+            <div *ngIf="datesToggleValue === 'DaysOff'">
               <div>
                 <mat-form-field class="days-off-display">
                   <mat-label>Days Off</mat-label>
@@ -82,7 +83,7 @@
                 </button>
               </div>
               <mat-form-field>
-                <input matInput placeholder="Choose a date range" [satDatepicker]="picker" [value]="date">
+                <input matInput placeholder="Choose a date range" [satDatepicker]="picker" [value]="daysOffDateRange">
                 <sat-datepicker #picker [rangeMode]="true"></sat-datepicker>
                 <sat-datepicker-toggle matSuffix [for]="picker"></sat-datepicker-toggle>
               </mat-form-field>
@@ -163,7 +164,7 @@
             evening <span class="checkbox-hours">(17pm - 21pm)</span>
           </mat-checkbox>
           <mat-checkbox [(ngModel)]="this.filterParams.flightTime.outbound.night" (change)="onCheckboxChanged()">night
-              <span class="checkbox-hours">(21pm - 5am)</span>
+            <span class="checkbox-hours">(21pm - 5am)</span>
           </mat-checkbox>
           <div>
             <button mat-stroked-button color="primary" (click)="resetOutboundTimesCheckboxs()">reset</button>

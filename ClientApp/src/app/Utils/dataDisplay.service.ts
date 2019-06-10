@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,15 @@ export class DataDisplayService {
     const year: string = date.getFullYear().toString();
 
     return day + ' ' + monthNames[monthIndex] + ' ' + year;
+  }
+
+  getDateRangeDispaly(fromDate: Date, toDate?: Date): string {
+    let output = this.getDateDispaly(fromDate);
+    if (toDate) {
+      output += ' - ' + this.getDateDispaly(toDate);
+    }
+
+    return output;
   }
 
   getTimeDispaly(date: Date): string {

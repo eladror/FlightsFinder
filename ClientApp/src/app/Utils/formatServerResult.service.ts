@@ -16,6 +16,7 @@ export class FormatServerResultService {
             trip.outbound.arrive = this.setDateValue(trip.outbound.arrive);
             trip.outbound.departure = this.setDateValue(trip.outbound.departure);
             trip.outbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.outbound.departure, trip.outbound.arrive);
+            trip.outboundDate = trip.outbound.departure;
 
             trip.outbound.flights.forEach(flight => {
                 flight.arrive = this.setDateValue(flight.arrive);
@@ -27,6 +28,7 @@ export class FormatServerResultService {
                 trip.inbound.arrive = this.setDateValue(trip.inbound.arrive);
                 trip.inbound.departure = this.setDateValue(trip.inbound.departure);
                 trip.inbound.daysDiff = this.dataDisplayService.getDatesDiffreceInDays(trip.inbound.departure, trip.inbound.arrive);
+                trip.inboundDate = trip.inbound.departure;
 
                 trip.inbound.flights.forEach(flight => {
                     flight.arrive = this.setDateValue(flight.arrive);
