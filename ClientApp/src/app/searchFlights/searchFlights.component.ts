@@ -33,7 +33,7 @@ export class SearchFlightsComponent {
   returnDate: FormControl;
   minDate: Date;
   maxDate: Date;
-  daysOffDateRange: DateRange;
+  daysOffDateRange: FormControl;
   searchByDates = 'Dates';
   searchByDaysOff = 'DaysOff';
   datesToggleValue = this.searchByDates;
@@ -81,6 +81,7 @@ export class SearchFlightsComponent {
   minPriceSliderValue = 0;
   maxPriceSliderValue = 3000;
   priceSliderValue: number;
+  date;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
     private smartFlightsFilterService: SmartFlightsFilterService,
@@ -100,7 +101,7 @@ export class SearchFlightsComponent {
     this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
     const returnDateForRange = new Date();
     returnDateForRange.setDate(returnDate.getDate() + 7);
-    this.daysOffDateRange = { begin: new Date(), end: returnDateForRange };
+    this.daysOffDateRange = new FormControl({ begin: new Date(), end: returnDateForRange });
   }
 
   subscribeToWhereFromField() {
@@ -168,7 +169,7 @@ export class SearchFlightsComponent {
 
     if (this.datesToggleValue === this.searchByDaysOff) {
       const searchDates: DateRange[] =
-        this.daysOffUtilsService.getDatesToSerach(this.daysOffDateRange, this.numberOfDaysOff, this.daysOff);
+        this.daysOffUtilsService.getDatesToSerach(this.daysOffDateRange.value, this.numberOfDaysOff, this.daysOff);
 
 
       const observables = [];
