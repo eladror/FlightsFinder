@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class DaysOffUtilsService {
-    getDatesToSerach(dateRange: DateRange, wantedDaysOff, uncounedDates: Day[]): DateRange[] {
+    getDatesToSerach(dateRange: DateRange, wantedDaysOff, uncountedDays: Day[]): DateRange[] {
         const dateRanges: DateRange[] = [];
 
         const currentRange: DateRange = { begin: dateRange.begin, end: dateRange.begin };
@@ -13,7 +13,7 @@ export class DaysOffUtilsService {
 
         while (currentDate <= dateRange.end) {
             let daysOffNum = 0;
-            if (this.isDayOff(currentDate, uncounedDates)) {
+            if (this.isDayOff(currentDate, uncountedDays)) {
                 daysOffNum++;
             }
 
@@ -21,7 +21,7 @@ export class DaysOffUtilsService {
 
             while (daysOffNum <= wantedDaysOff && currentDate <= dateRange.end) {
                 const nextDay = this.addDays(currentDate, 1);
-                if (this.isDayOff(nextDay, uncounedDates)) {
+                if (this.isDayOff(nextDay, uncountedDays)) {
                     if (daysOffNum < wantedDaysOff) {
                         currentDate = nextDay;
                     }

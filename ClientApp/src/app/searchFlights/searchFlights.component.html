@@ -62,8 +62,8 @@
                 <mat-datepicker #departurePicker></mat-datepicker>
               </mat-form-field>
               <mat-form-field class="date-picker-field">
-                <input [min]="departureDate" [max]="maxDate" [disabled]="isOneWay()" matInput
-                  [matDatepicker]="returnPicker" placeholder="Return on..." [formControl]="returnDate">
+                <input [min]="minDate" [max]="maxDate" [disabled]="isOneWay()" matInput [matDatepicker]="returnPicker"
+                  placeholder="Return on..." [formControl]="returnDate">
                 <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
                 <mat-datepicker #returnPicker></mat-datepicker>
               </mat-form-field>
@@ -83,7 +83,8 @@
                 </button>
               </div>
               <mat-form-field>
-                <input matInput placeholder="Choose a date range" [satDatepicker]="picker" [formControl]="daysOffDateRange">
+                <input matInput placeholder="Choose a date range" [satDatepicker]="picker"
+                  [formControl]="daysOffDateRange" [min]="minDate">
                 <sat-datepicker #picker [rangeMode]="true"></sat-datepicker>
                 <sat-datepicker-toggle matSuffix [for]="picker"></sat-datepicker-toggle>
               </mat-form-field>
@@ -100,8 +101,9 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="search-button-div">
-          <button type="submit" mat-raised-button color="accent">Search
+        <div class="search-button-div" [matTooltip]="getTooltipMessage()" [matTooltipDisabled]="showErrorTooltip()"
+          matTooltipClass="example-tooltip-red">
+          <button type="submit" mat-raised-button color="accent" [disabled]="disableSearch()">Search
             <mat-icon>search</mat-icon>
           </button>
         </div>

@@ -16,7 +16,7 @@ import {
   MatNativeDateModule, MatDatepickerModule, MatRadioModule, MatCardModule,
   MatGridListModule, MatDividerModule, MatExpansionModule,
   MatProgressSpinnerModule, MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-  MatDialogModule, MatCheckboxModule, MatSliderModule
+  MatDialogModule, MatCheckboxModule, MatSliderModule, MatTooltipModule
 } from '@angular/material';
 import { DataDisplayService } from './Utils/dataDisplay.service';
 import { FlightComponent } from './flight/flight.component';
@@ -39,14 +39,14 @@ import { DaysOffUtilsService } from './Utils/daysOffUtils.service';
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
     MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
     MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-    MatDialogModule, MatCheckboxModule, MatSliderModule],
+    MatDialogModule, MatCheckboxModule, MatSliderModule, MatTooltipModule],
   exports: [MatToolbarModule, MatTabsModule, MatIconModule,
     FormsModule, MatInputModule, MatFormFieldModule,
     ReactiveFormsModule, MatAutocompleteModule, MatButtonModule, MatNativeDateModule,
     MatDatepickerModule, MatRadioModule, MatCardModule, MatGridListModule,
     MatDividerModule, MatExpansionModule, MatProgressSpinnerModule,
     MatProgressBarModule, MatSelectModule, MatButtonToggleModule,
-    MatDialogModule, MatCheckboxModule, MatSliderModule],
+    MatDialogModule, MatCheckboxModule, MatSliderModule, MatTooltipModule],
 })
 export class AngularMaterialModule { }
 @NgModule({

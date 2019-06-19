@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, map, tap, startWith, switchMap, debounceTime, distinctUntilChanged, takeWhile, first, finalize } from 'rxjs/operators';
@@ -33,6 +33,7 @@ export class SearchFlightsComponent {
   returnDate: FormControl;
   minDate: Date;
   maxDate: Date;
+  defultDepartureDate: Date;
   daysOffDateRange: FormControl;
   searchByDates = 'Dates';
   searchByDaysOff = 'DaysOff';
@@ -93,12 +94,14 @@ export class SearchFlightsComponent {
   }
 
   initializeDates() {
-    this.departureDate = new FormControl(new Date());
+    this.minDate = new Date();
+    this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
+    this.defultDepartureDate = new Date();
+    this.defultDepartureDate.setHours(0, 0, 0, 0);
+    this.departureDate = new FormControl(this.defultDepartureDate);
     const returnDate = new Date();
     returnDate.setDate(returnDate.getDate() + 1);
     this.returnDate = new FormControl(returnDate);
-    this.minDate = new Date();
-    this.maxDate = new Date(this.minDate.getFullYear() + 1, this.minDate.getMonth(), this.minDate.getDate());
     const returnDateForRange = new Date();
     returnDateForRange.setDate(returnDate.getDate() + 7);
     this.daysOffDateRange = new FormControl({ begin: new Date(), end: returnDateForRange });
@@ -211,6 +214,9 @@ export class SearchFlightsComponent {
   }
 
   requestFromServer(departureDate: Date, returnDate: Date) {
+    if (departureDate === this.addHoursToDate(this.defultDepartureDate, 3)) {
+      departureDate = new Date();
+    }
     departureDate = this.addHoursToDate(departureDate, 3);
     returnDate = this.addHoursToDate(returnDate, 3);
 
@@ -338,5 +344,48 @@ export class SearchFlightsComponent {
   addHoursToDate(date: Date, hours: number) {
     date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
     return date;
+  }
+
+  disableSearch(): boolean {
+    return (this.currentSearchState === searchState.loading) || !this.isWhereFromValid()
+      || !this.isWhereToValid() || !this.isDatesValid() || !this.isPlacesValid();
+  }
+
+  showErrorTooltip(): boolean {
+    return this.isWhereFromValid() && this.isWhereToValid() && this.isDatesValid() && this.isPlacesValid();
+  }
+
+  isWhereFromValid(): boolean {
+    return !this.whereFrom.value || (this.whereFrom.value && this.whereFrom.value.placeId);
+  }
+
+  isWhereToValid(): boolean {
+    return !this.whereTo.value || (this.whereTo.value && this.whereTo.value.placeId);
+  }
+
+  isDatesValid(): boolean {
+    if ((this.datesToggleValue === this.searchByDates) && this.departureDate.value && this.returnDate.value) {
+      return (this.departureDate.value <= this.returnDate.value);
+    } else {
+      return true;
+    }
+  }
+
+  isPlacesValid(): boolean {
+    return !(this.whereFrom.value && this.whereTo.value && (this.whereFrom.value.placeId === this.whereTo.value.placeId));
+  }
+
+  getTooltipMessage() {
+    if (!this.isWhereFromValid() || !this.isWhereToValid()) {
+      return 'Please choose existing locations';
+    }
+    if (!this.isPlacesValid()) {
+      return 'The departure and arrivle locations must be different';
+    }
+    if (!this.isDatesValid()) {
+      return 'Return date must be after departure date';
+    }
+
+    return 'form not valid';
   }
 }
