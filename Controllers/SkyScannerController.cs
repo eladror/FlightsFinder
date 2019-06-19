@@ -16,7 +16,7 @@ namespace FlightsFinder.Controllers
         private SkyScannerApi api { get; set; }
         private static readonly string SKY_SCANNER_KEY = "a782b8720fmsh4ac99c302e7bd93p1396a3jsn094060809649";
         private static readonly string DEFAULT_COUNTRY = "IL";
-        private static readonly int CACHE_TIME = 5 * 60;
+        private static readonly int CACHE_TIME = 5 * 60 * 60;
         private Place defaultOrigin;
         private Place[] defaultDestination;
         private Random rand;
